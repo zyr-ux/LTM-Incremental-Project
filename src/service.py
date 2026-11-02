@@ -5,7 +5,9 @@ import pandas as pd
 import joblib
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-MODEL_PATH = BASE_DIR / "models" / "churn_pipeline_baseline.joblib"
+CHAMPION_MODEL_PATH = BASE_DIR / "models" / "churn_pipeline_champion.joblib"
+BASELINE_MODEL_PATH = BASE_DIR / "models" / "churn_pipeline_baseline.joblib"
+MODEL_PATH = CHAMPION_MODEL_PATH if CHAMPION_MODEL_PATH.exists() else BASELINE_MODEL_PATH
 
 # Cache loaded model in memory
 model = None

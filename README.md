@@ -2,8 +2,6 @@
 
 RetailMind AI is an end-to-end retail AI platform built incrementally across 35 engineering and data science modules. The platform introduces applied machine learning, deep learning, operational tooling, and scalable system design to solve high-impact retail problems—including customer churn prediction, demand forecasting, inventory optimization, and customer personalization.
 
-Daily progress, incremental architecture notes, and iteration experiments are tracked in the [Developer Logs Index](docs/devlogs/INDEX.md).
-
 ---
 
 ## 🎯 Customer Churn Prediction Module
@@ -30,50 +28,68 @@ LTM Incremental Project/
 ├── src/
 │   ├── __init__.py
 │   ├── pipeline.py
+│   ├── compare_models.py
 │   └── service.py
 ├── .gitignore
+├── requirements.txt
 └── README.md
 ```
 
 ---
 
-## 📊 Baseline Model Performance
+## 📊 Model Evaluation & Benchmarking
 
-*Baseline classifier: Logistic Regression (`class_weight='balanced'`, `random_state=42`)*  
-*Evaluated on 20% stratified holdout test set ($N=1409$)*
+All models are trained with identical preprocessing (`StandardScaler` + `OneHotEncoder`) on an 80/20 stratified train/test split.
 
-| Metric | Baseline Score | Notes |
-| :--- | :---: | :--- |
-| **Accuracy** | **73.81%** | Overall classification accuracy |
-| **Precision (Churn=1)** | **50.43%** | Precision on positive churn class |
-| **Recall (Churn=1)** | **78.34%** | High retention catch rate for at-risk customers |
-| **F1-Score (Churn=1)** | **61.36%** | Harmonic mean of Precision and Recall |
-| **ROC-AUC** | **84.15%** | Strong threshold-independent discriminative ability |
+### Multi-Model Comparison
 
-> For detailed metric interpretations, classification reports, and iterative findings, see the [Developer Logs Index](docs/devlogs/INDEX.md).
+| Model | Accuracy | Precision (Churn=1) | Recall (Churn=1) | F1-Score (Churn=1) | ROC-AUC | Status |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Logistic Regression (Baseline)** | 73.81% | 50.43% | **78.34%** | 61.36% | **84.15%** | Baseline reference |
+| **Decision Tree** | 72.75% | 48.67% | 48.93% | 48.80% | 65.17% | High variance / overfits |
+| **Random Forest** | **76.51%** | **55.13%** | 61.76% | 58.26% | 82.28% | Balanced ensemble |
+| **SVM (RBF Kernel)** | 74.52% | 51.33% | **77.27%** | **61.69%** | 82.13% | **Champion Candidate** |
+
+> **Champion Selection**: **SVM (RBF Kernel)** was selected as the non-linear champion for its high recall (**77.27%**) and strongest non-linear F1 score (**61.69%**), which minimizes missed customer churn opportunities.
+
+---
+
+## 📝 Developer Logs
+
+Detailed iteration notes, architectural decisions, data audits, and experiment analyses are recorded daily.
+Browse all daily logs in the [Devlogs Index](docs/devlogs/INDEX.md).
 
 ---
 
 ## 🚀 Quickstart & Usage
 
-### 1. Requirements
-Install the core dependencies:
-```bash
-pip install pandas scikit-learn joblib
+### 1. Environment Setup (venv)
+Create and activate a virtual environment, then install the dependencies:
+
+**On Windows (PowerShell):**
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
 ```
 
-### 2. Run Training & Evaluation Pipeline
-Ensure `WA_Fn-UseC_-Telco-Customer-Churn.csv` is in `data/raw/` and execute:
+**On macOS / Linux:**
 ```bash
-python src/pipeline.py
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 ```
-This script will:
-1. Ingest and sanitize the data (handling missing whitespace values in `TotalCharges`).
-2. Save cleaned data to `data/processed/telco_churn_clean.csv`.
-3. Train-test split using stratification.
-4. Apply preprocessing (`OneHotEncoder` for categoricals, `StandardScaler` for numerical features).
-5. Train the baseline Logistic Regression model.
-6. Print evaluation metrics and persist the full pipeline to `models/churn_pipeline_baseline.joblib`.
+
+### 2. Run Training & Evaluation Pipelines
+- To train the baseline Logistic Regression model:
+  ```bash
+  python src/pipeline.py
+  ```
+- To train and compare Decision Tree, Random Forest, and SVM models:
+  ```bash
+  python src/compare_models.py
+  ```
+  This trains all three candidate models with consistent preprocessing, evaluates them against the holdout set, and saves the champion pipeline to `models/churn_pipeline_champion.joblib`.
 
 ### 3. Inference via Churn Service
 Use the standalone service helper in `src/service.py`:
