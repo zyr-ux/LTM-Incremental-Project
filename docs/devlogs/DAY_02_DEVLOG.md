@@ -29,7 +29,7 @@ All models were evaluated on the identical 20% stratified holdout set ($N = 1,40
 | **Baseline (Logistic Regression)** | 73.81% | 50.43% | **78.34%** | 61.36% | 84.15% | Day 1 Reference |
 | **Decision Tree** | 72.75% | 48.67% | 48.93% | 48.80% | 65.17% | Prone to overfitting |
 | **Random Forest** | **76.51%** | **55.13%** | 61.76% | 58.26% | **82.28%** | Best accuracy & precision balance |
-| **SVM (RBF Kernel)** | 74.52% | 51.33% | **77.27%** | **61.69%** | 82.13% | 🏆 **Champion Candidate** |
+| **SVM (RBF Kernel)** | 74.52% | 51.33% | **77.27%** | **61.69%** | 82.13% | **Champion Candidate** |
 
 ---
 
@@ -56,10 +56,3 @@ All models were evaluated on the identical 20% stratified holdout set ($N = 1,40
 - Comparison script: `src/compare_models.py` runs all three models, logs formatted tables, and exports the winner.
 - Model artifact: `models/churn_pipeline_champion.joblib` saved alongside `models/churn_pipeline_baseline.joblib`.
 - Inference service: `src/service.py` automatically prefers the champion model when present.
-
----
-
-## 5. Next Steps (Day 3 Preview)
-- Run a systematic multi-model sweep with hyperparameter tuning (`GridSearchCV` / `RandomizedSearchCV`).
-- Conduct bias/variance diagnosis and learning curve analysis.
-

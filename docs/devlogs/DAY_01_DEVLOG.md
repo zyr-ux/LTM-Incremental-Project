@@ -73,10 +73,3 @@ weighted avg       0.80      0.74      0.75      1409
 ## 5. Challenges & Decisions
 - **Training-Serving Skew Prevention**: Combining preprocessing steps directly inside `sklearn.pipeline.Pipeline` guarantees that the exact transformations (scaling parameters, one-hot category mappings) applied during training are identically applied during inference in `service.py`.
 - **Handling Zero Tenure**: Rather than discarding new customer rows with empty `TotalCharges`, we impute or set to `0.0` to preserve data integrity.
-
----
-
-## 6. Next Steps (Day 2 Preview)
-- Explore tree-based and non-linear algorithms: Decision Trees, Random Forests, and Support Vector Machines.
-- Perform hyperparameter tuning and cross-validation to establish a champion model over this Day 1 baseline.
-
