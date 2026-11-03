@@ -24,11 +24,15 @@ LTM Incremental Project/
 ├── docs/
 │   └── devlogs/
 ├── models/
+│   ├── churn_pipeline_baseline.joblib
+│   ├── churn_pipeline_champion.joblib
+│   └── churn_v3.joblib
 ├── notebooks/
 ├── src/
 │   ├── __init__.py
 │   ├── pipeline.py
 │   ├── compare_models.py
+│   ├── tune_and_diagnose.py
 │   └── service.py
 ├── .gitignore
 ├── requirements.txt
@@ -41,16 +45,46 @@ LTM Incremental Project/
 
 All models are trained with identical preprocessing (`StandardScaler` + `OneHotEncoder`) on an 80/20 stratified train/test split.
 
-### Multi-Model Comparison
+### Multi-Model Comparison (Day 2 Untuned vs Day 3 Tuned)
+
+#### Day 3: Systematic Hyperparameter Tuning (`GridSearchCV` 5-Fold Cross-Validation)
+
+| Model | CV ROC-AUC | Train ROC-AUC | Generalization Gap | Optimal Hyperparameters | Bias / Variance Diagnosis |
+| :--- | :---: | :---: | :---: | :--- | :--- |
+| **Logistic Regression** | 0.8464 | 0.8500 | **0.0036** | `C=10.0`, `class_weight=None` | Minimal variance; slight linear bias |
+| **Decision Tree** | 0.8293 | 0.8541 | 0.0248 | `max_depth=5`, `min_samples_split=20` | Depth constraint contained overfit |
+| **Random Forest (Champion)** | **0.8474** | 0.9057 | 0.0583 | `n_estimators=200`, `max_depth=8`, `min_samples_split=10` | **Tuned Champion**: Best discriminative AUC |
+| **SVM (RBF Kernel)** | 0.8423 | 0.8488 | 0.0065 | `C=1.0`, `gamma=0.01`, `class_weight='balanced'` | Strong generalization; balanced margins |
+
+#### Holdout Test Set Benchmark ($N = 1,409$)
 
 | Model | Accuracy | Precision (Churn=1) | Recall (Churn=1) | F1-Score (Churn=1) | ROC-AUC | Status |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Logistic Regression (Baseline)** | 73.81% | 50.43% | **78.34%** | 61.36% | **84.15%** | Baseline reference |
-| **Decision Tree** | 72.75% | 48.67% | 48.93% | 48.80% | 65.17% | High variance / overfits |
-| **Random Forest** | **76.51%** | **55.13%** | 61.76% | 58.26% | 82.28% | Balanced ensemble |
-| **SVM (RBF Kernel)** | 74.52% | 51.33% | **77.27%** | **61.69%** | 82.13% | **Champion Candidate** |
+| **Logistic Regression (Baseline)** | 73.81% | 50.43% | 78.34% | 61.36% | 84.15% | Day 1 Reference |
+| **Logistic Regression (Tuned)** | 80.41% | 65.41% | 55.61% | 60.12% | 84.12% | Tuned Linear |
+| **Decision Tree (Tuned)** | 79.84% | 63.47% | 56.68% | 59.89% | 82.97% | Pruned Tree |
+| **Random Forest (Tuned)** | **80.13%** | **66.91%** | 49.73% | 57.06% | **84.33%** | **Day 3 Locked Champion (`churn_v3.joblib`)** |
+| **SVM (RBF Kernel, Tuned)** | 70.48% | 46.80% | **82.09%** | 59.61% | 83.34% | High Recall Specialist |
 
-> **Champion Selection**: **SVM (RBF Kernel)** was selected as the non-linear champion for its high recall (**77.27%**) and strongest non-linear F1 score (**61.69%**), which minimizes missed customer churn opportunities.
+> **Champion Lock**: **Random Forest** with restricted tree depth (`max_depth=8`, `min_samples_split=10`, `n_estimators=200`) is locked as the **Day 3 champion** and versioned to `models/churn_v3.joblib`. It achieves the top CV ROC-AUC (0.8474) and highest holdout precision (66.91%) while bounding the generalization variance gap via learning curve diagnostics.
+
+---
+
+## 📈 Learning Curve Diagnostics (Bias vs Variance)
+
+A 5-fold cross-validated learning curve analysis on the locked champion confirms model behavior as sample size scales:
+
+| Training Samples | Mean Train ROC-AUC | Mean Validation ROC-AUC | Generalization Gap |
+| :---: | :---: | :---: | :---: |
+| **563** | 0.9584 | 0.8295 | 0.1289 |
+| **1,831** | 0.9385 | 0.8428 | 0.0957 |
+| **3,098** | 0.9192 | 0.8434 | 0.0758 |
+| **4,366** | 0.9059 | 0.8439 | 0.0620 |
+| **5,634** | **0.8985** | **0.8458** | **0.0528** |
+
+**Diagnostic Takeaway**:
+- The generalization gap contracts significantly (from $0.1289 \rightarrow 0.0528$) as sample size scales.
+- Validation score plateaus near $\approx 0.846$, showing that further improvements require **feature engineering** (Day 4+) rather than simply accumulating more rows.
 
 ---
 
@@ -89,7 +123,12 @@ pip install -r requirements.txt
   ```bash
   python src/compare_models.py
   ```
-  This trains all three candidate models with consistent preprocessing, evaluates them against the holdout set, and saves the champion pipeline to `models/churn_pipeline_champion.joblib`.
+  This trains candidate models with consistent preprocessing, evaluates them against the holdout set, and saves the candidate pipeline.
+- To execute Day 3 Multi-Model Grid Search, Bias-Variance Diagnostics, and Learning Curves:
+  ```bash
+  python src/tune_and_diagnose.py
+  ```
+  This tunes hyperparameter grids across all models using 5-fold cross-validation, runs learning curve diagnostics, and locks the champion model to `models/churn_v3.joblib`.
 
 ### 3. Inference via Churn Service
 Use the standalone service helper in `src/service.py`:

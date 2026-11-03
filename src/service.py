@@ -5,59 +5,64 @@ import pandas as pd
 import joblib
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-CHAMPION_MODEL_PATH = BASE_DIR / "models" / "churn_pipeline_champion.joblib"
-BASELINE_MODEL_PATH = BASE_DIR / "models" / "churn_pipeline_baseline.joblib"
-MODEL_PATH = CHAMPION_MODEL_PATH if CHAMPION_MODEL_PATH.exists() else BASELINE_MODEL_PATH
+MODEL_CANDIDATES = [
+    BASE_DIR / "models" / "churn_v3.joblib",
+    BASE_DIR / "models" / "churn_pipeline_champion.joblib",
+    BASE_DIR / "models" / "churn_pipeline_baseline.joblib",
+]
 
-# Cache loaded model in memory
-model = None
+_model = None
+
+def get_model_path():
+    for path in MODEL_CANDIDATES:
+        if path.exists():
+            return path
+    raise FileNotFoundError(
+        f"No model found in {[str(p) for p in MODEL_CANDIDATES]}. Run pipeline.py first."
+    )
 
 def get_model():
-    global model
-    if model is None:
-        if not MODEL_PATH.exists():
-            raise FileNotFoundError(f"Model file not found at {MODEL_PATH}. Run pipeline.py first.")
-        model = joblib.load(MODEL_PATH)
-    return model
+    global _model
+    if _model is None:
+        _model = joblib.load(get_model_path())
+    return _model
+
+def _get_risk_level(prob):
+    if prob >= 0.7:
+        return "High"
+    if prob >= 0.4:
+        return "Medium"
+    return "Low"
 
 def predict_churn(customer_data):
     clf = get_model()
 
-    if isinstance(customer_data, dict):
+    single_input = isinstance(customer_data, dict)
+    if single_input:
         df = pd.DataFrame([customer_data])
-        single_input = True
     elif isinstance(customer_data, list):
         df = pd.DataFrame(customer_data)
-        single_input = False
     else:
         df = customer_data.copy()
-        single_input = False
 
     if "TotalCharges" in df.columns:
-        df["TotalCharges"] = pd.to_numeric(df["TotalCharges"].astype(str).str.strip(), errors="coerce").fillna(0.0)
+        df["TotalCharges"] = pd.to_numeric(
+            df["TotalCharges"].astype(str).str.strip(), errors="coerce"
+        ).fillna(0.0)
 
     preds = clf.predict(df)
     probs = clf.predict_proba(df)[:, 1]
 
-    results = []
-    for pred, prob in zip(preds, probs):
-        prob_val = round(float(prob), 4)
-        if prob_val >= 0.7:
-            risk = "High"
-        elif prob_val >= 0.4:
-            risk = "Medium"
-        else:
-            risk = "Low"
-
-        results.append({
+    results = [
+        {
             "churn_prediction": int(pred),
-            "churn_probability": prob_val,
-            "risk_level": risk
-        })
+            "churn_probability": round(float(prob), 4),
+            "risk_level": _get_risk_level(float(prob)),
+        }
+        for pred, prob in zip(preds, probs)
+    ]
 
-    if single_input:
-        return results[0]
-    return results
+    return results[0] if single_input else results
 
 if __name__ == "__main__":
     sample_customer = {
