@@ -1,7 +1,3 @@
-"""
-RetailMind AI - Day 3 Module: Multi-Model Tuning, Bias-Variance Diagnostics & Champion Lock
-"""
-
 from pathlib import Path
 import warnings
 import numpy as np

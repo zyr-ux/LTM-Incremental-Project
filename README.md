@@ -9,7 +9,7 @@ RetailMind AI is an end-to-end retail AI platform built incrementally across 35 
 The initial platform service establishes RetailMind's machine learning backbone by shipping a working, persisted customer churn prediction model exposed as an inference service to flag at-risk customers proactively.
 
 - **Dataset**: [Telco Customer Churn (WA_Fn-UseC_-Telco-Customer-Churn.csv)](data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv)
-- **Core Libraries**: `pandas`, `scikit-learn`, `joblib`
+- **Core Libraries**: `pandas`, `scikit-learn`, `xgboost`, `joblib`
 - **Workflow**: Ingest $\rightarrow$ Preprocess $\rightarrow$ Train Baseline $\rightarrow$ Evaluate $\rightarrow$ Persist pipeline $\rightarrow$ Serve predictions.
 
 ---
@@ -26,13 +26,15 @@ LTM Incremental Project/
 ├── models/
 │   ├── churn_pipeline_baseline.joblib
 │   ├── churn_pipeline_champion.joblib
-│   └── churn_v3.joblib
+│   ├── churn_v3.joblib
+│   └── churn_v4.joblib
 ├── notebooks/
 ├── src/
 │   ├── __init__.py
 │   ├── pipeline.py
 │   ├── compare_models.py
 │   ├── tune_and_diagnose.py
+│   ├── feature_engineering_and_ensembles.py
 │   └── service.py
 ├── .gitignore
 ├── requirements.txt
@@ -63,10 +65,14 @@ All models are trained with identical preprocessing (`StandardScaler` + `OneHotE
 | **Logistic Regression (Baseline)** | 73.81% | 50.43% | 78.34% | 61.36% | 84.15% | Day 1 Reference |
 | **Logistic Regression (Tuned)** | 80.41% | 65.41% | 55.61% | 60.12% | 84.12% | Tuned Linear |
 | **Decision Tree (Tuned)** | 79.84% | 63.47% | 56.68% | 59.89% | 82.97% | Pruned Tree |
-| **Random Forest (Tuned)** | **80.13%** | **66.91%** | 49.73% | 57.06% | **84.33%** | **Day 3 Locked Champion (`churn_v3.joblib`)** |
+| **Random Forest (Tuned)** | 80.13% | 66.91% | 49.73% | 57.06% | 84.33% | Day 3 Champion (`churn_v3.joblib`) |
 | **SVM (RBF Kernel, Tuned)** | 70.48% | 46.80% | **82.09%** | 59.61% | 83.34% | High Recall Specialist |
+| **Random Forest (Day 4 FE)** | 79.84% | 65.73% | 50.27% | 56.97% | 84.29% | Bagging + Domain FE |
+| **Random Forest + PCA (15 comps)** | 80.06% | 67.82% | 47.33% | 55.75% | 84.14% | Bagging + PCA Reduction |
+| **XGBoost + PCA (15 comps)** | 81.05% | **68.38%** | 53.21% | **59.85%** | 84.77% | Boosting + PCA Reduction |
+| **XGBoost (Day 4 FE Champion)** | **80.55%** | 67.48% | 51.60% | 58.48% | **84.82%** | **Phase-1 Production Champion (`churn_v4.joblib`)** |
 
-> **Champion Lock**: **Random Forest** with restricted tree depth (`max_depth=8`, `min_samples_split=10`, `n_estimators=200`) is locked as the **Day 3 champion** and versioned to `models/churn_v3.joblib`. It achieves the top CV ROC-AUC (0.8474) and highest holdout precision (66.91%) while bounding the generalization variance gap via learning curve diagnostics.
+> **Phase-1 Production Champion Lock**: **XGBoost** with engineered domain features (`n_estimators=100`, `max_depth=3`, `learning_rate=0.05`, `subsample=0.8`, `colsample_bytree=0.8`) is locked as the **Day 4 & Phase-1 deliverable champion** (Milestone Assessment 2) and persisted to `models/churn_v4.joblib` (and active `models/churn_pipeline_champion.joblib`). It delivers the highest holdout ROC-AUC (**84.82%**) and 5-fold CV ROC-AUC (**0.8495**), with a minimal generalization gap ($0.0198$), superior precision ($67.48\%$), and fully frozen end-to-end preprocessing.
 
 ---
 
@@ -129,6 +135,11 @@ pip install -r requirements.txt
   python src/tune_and_diagnose.py
   ```
   This tunes hyperparameter grids across all models using 5-fold cross-validation, runs learning curve diagnostics, and locks the champion model to `models/churn_v3.joblib`.
+- To execute Day 4 Feature Engineering, PCA Analysis, Ensemble Boosting/Bagging & Finalize Phase-1 Model:
+  ```bash
+  python src/feature_engineering_and_ensembles.py
+  ```
+  This computes tenure buckets, financial charge velocity ratios, and contract/service interaction flags, benchmarks PCA dimensionality reduction against bagging and gradient boosting, and locks the finalized production model to `models/churn_v4.joblib` and `models/churn_pipeline_champion.joblib`.
 
 ### 3. Inference via Churn Service
 Use the standalone service helper in `src/service.py`:

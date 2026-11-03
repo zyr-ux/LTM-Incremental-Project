@@ -1,13 +1,20 @@
 # Prediction Engine
 
+import sys
 from pathlib import Path
 import pandas as pd
 import joblib
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
+
+from src.feature_engineering_and_ensembles import RetailFeatureEngineer
+
 MODEL_CANDIDATES = [
-    BASE_DIR / "models" / "churn_v3.joblib",
+    BASE_DIR / "models" / "churn_v4.joblib",
     BASE_DIR / "models" / "churn_pipeline_champion.joblib",
+    BASE_DIR / "models" / "churn_v3.joblib",
     BASE_DIR / "models" / "churn_pipeline_baseline.joblib",
 ]
 
