@@ -1,4 +1,4 @@
-# Prediction Engine
+# Centralised file that serves the model for prediction
 
 import sys
 from pathlib import Path
@@ -53,9 +53,7 @@ def predict_churn(customer_data):
         df = customer_data.copy()
 
     if "TotalCharges" in df.columns:
-        df["TotalCharges"] = pd.to_numeric(
-            df["TotalCharges"].astype(str).str.strip(), errors="coerce"
-        ).fillna(0.0)
+        df["TotalCharges"] = pd.to_numeric(df["TotalCharges"].astype(str).str.strip(), errors="coerce")
 
     preds = clf.predict(df)
     probs = clf.predict_proba(df)[:, 1]

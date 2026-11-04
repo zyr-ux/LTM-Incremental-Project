@@ -1,3 +1,5 @@
+# Model Fine Tuning
+
 from pathlib import Path
 import warnings
 import numpy as np
@@ -5,13 +7,10 @@ import pandas as pd
 import joblib
 
 from sklearn.model_selection import (
-    train_test_split,
     GridSearchCV,
     StratifiedKFold,
     learning_curve
 )
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
-from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
@@ -26,49 +25,19 @@ from sklearn.metrics import (
     classification_report
 )
 
+from src.preprocessing import (
+    get_train_test_data,
+    get_preprocessor,
+    BASE_DIR
+)
+
 warnings.filterwarnings("ignore")
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-DATA_PATH = BASE_DIR / "data" / "raw" / "WA_Fn-UseC_-Telco-Customer-Churn.csv"
 CHURN_V3_MODEL_PATH = BASE_DIR / "models" / "churn_v3.joblib"
 CHAMPION_MODEL_PATH = BASE_DIR / "models" / "churn_pipeline_champion.joblib"
 
-num_cols = ["tenure", "MonthlyCharges", "TotalCharges"]
-cat_cols = [
-    "gender",
-    "SeniorCitizen",
-    "Partner",
-    "Dependents",
-    "PhoneService",
-    "MultipleLines",
-    "InternetService",
-    "OnlineSecurity",
-    "OnlineBackup",
-    "DeviceProtection",
-    "TechSupport",
-    "StreamingTV",
-    "StreamingMovies",
-    "Contract",
-    "PaperlessBilling",
-    "PaymentMethod"
-]
-
-def load_data(path=DATA_PATH):
-    df = pd.read_csv(path)
-    df["TotalCharges"] = pd.to_numeric(df["TotalCharges"].astype(str).str.strip(), errors="coerce").fillna(0.0)
-    df["Churn"] = df["Churn"].astype(str).str.strip().map({"Yes": 1, "No": 0}).astype(int)
-    return df
-
-def get_preprocessor():
-    return ColumnTransformer(
-        transformers=[
-            ("num", StandardScaler(), num_cols),
-            ("cat", OneHotEncoder(handle_unknown="ignore"), cat_cols)
-        ]
-    )
-
 def run_grid_searches(X_train, y_train, cv):
-    preprocessor = get_preprocessor()
+    preprocessor = get_preprocessor(handle_unknown="ignore", impute_strategy="median")
 
     candidates = {
         "Logistic Regression": {
@@ -214,7 +183,6 @@ def lock_champion(tuning_results):
     print("STEP 4: LOCKING & VERSIONING DAY 3 CHAMPION")
     print("=" * 80)
     
-    # Selection criteria: Highest CV ROC-AUC with low generalization gap
     champion_name = max(tuning_results, key=lambda k: tuning_results[k]["cv_score"])
     champion_data = tuning_results[champion_name]
     champion_pipeline = champion_data["best_estimator"]
@@ -234,13 +202,9 @@ def lock_champion(tuning_results):
 
 def main():
     print("Initializing Day 3 Multi-Model Tuning & Validation Pipeline...\n")
-    df = load_data()
-    X = df[num_cols + cat_cols]
-    y = df["Churn"]
-
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42, stratify=y
-    )
+    X_train, X_test, y_train, y_test = get_train_test_data()
+    X = pd.concat([X_train, X_test])
+    y = pd.concat([y_train, y_test])
 
     cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
@@ -251,4 +215,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

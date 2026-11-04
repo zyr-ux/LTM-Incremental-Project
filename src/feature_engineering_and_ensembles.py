@@ -1,3 +1,5 @@
+# Feature Engineering
+
 from pathlib import Path
 import warnings
 import numpy as np
@@ -6,7 +8,6 @@ import joblib
 
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.model_selection import (
-    train_test_split,
     StratifiedKFold,
     cross_val_score,
 )
@@ -25,32 +26,18 @@ from sklearn.metrics import (
     classification_report,
 )
 
+from src.preprocessing import (
+    get_train_test_data,
+    get_preprocessor as get_raw_preprocessor,
+    NUMERICAL_COLS,
+    CATEGORICAL_COLS,
+    BASE_DIR,
+)
+
 warnings.filterwarnings("ignore")
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-DATA_PATH = BASE_DIR / "data" / "raw" / "WA_Fn-UseC_-Telco-Customer-Churn.csv"
 CHURN_V4_MODEL_PATH = BASE_DIR / "models" / "churn_v4.joblib"
 CHAMPION_MODEL_PATH = BASE_DIR / "models" / "churn_pipeline_champion.joblib"
-
-RAW_NUM_COLS = ["tenure", "MonthlyCharges", "TotalCharges"]
-RAW_CAT_COLS = [
-    "gender",
-    "SeniorCitizen",
-    "Partner",
-    "Dependents",
-    "PhoneService",
-    "MultipleLines",
-    "InternetService",
-    "OnlineSecurity",
-    "OnlineBackup",
-    "DeviceProtection",
-    "TechSupport",
-    "StreamingTV",
-    "StreamingMovies",
-    "Contract",
-    "PaperlessBilling",
-    "PaymentMethod",
-]
 
 NUM_COLS = [
     "tenure",
@@ -70,8 +57,7 @@ FLAG_COLS = [
     "electronic_check",
 ]
 
-CAT_COLS = RAW_CAT_COLS + ["tenure_group"]
-
+CAT_COLS = CATEGORICAL_COLS + ["tenure_group"]
 
 class RetailFeatureEngineer(BaseEstimator, TransformerMixin):
     __module__ = "src.feature_engineering_and_ensembles"
@@ -84,7 +70,7 @@ class RetailFeatureEngineer(BaseEstimator, TransformerMixin):
         if "TotalCharges" in X.columns:
             X["TotalCharges"] = pd.to_numeric(
                 X["TotalCharges"].astype(str).str.strip(), errors="coerce"
-            ).fillna(0.0)
+            )
 
         X["tenure_group"] = pd.cut(
             X["tenure"],
@@ -122,18 +108,6 @@ class RetailFeatureEngineer(BaseEstimator, TransformerMixin):
 
         return X
 
-
-def load_data(path=DATA_PATH):
-    df = pd.read_csv(path)
-    df["TotalCharges"] = pd.to_numeric(
-        df["TotalCharges"].astype(str).str.strip(), errors="coerce"
-    ).fillna(0.0)
-    df["Churn"] = (
-        df["Churn"].astype(str).str.strip().map({"Yes": 1, "No": 0}).astype(int)
-    )
-    return df
-
-
 def get_preprocessor():
     return ColumnTransformer(
         transformers=[
@@ -143,17 +117,13 @@ def get_preprocessor():
         ]
     )
 
-
 def evaluate_models(X_train, y_train, X_test, y_test):
     cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
     preprocessor = get_preprocessor()
 
     candidates = {
         "Day-3 Champion (RF baseline)": Pipeline([
-            ("prep", ColumnTransformer([
-                ("num", StandardScaler(), RAW_NUM_COLS),
-                ("cat", OneHotEncoder(handle_unknown="ignore", sparse_output=False), RAW_CAT_COLS),
-            ])),
+            ("prep", get_raw_preprocessor(NUMERICAL_COLS, CATEGORICAL_COLS, sparse_output=False, impute_strategy="median")),
             ("clf", RandomForestClassifier(n_estimators=200, max_depth=8, min_samples_split=10, random_state=42)),
         ]),
         "Random Forest (Day 4 FE)": Pipeline([
@@ -241,16 +211,8 @@ def evaluate_models(X_train, y_train, X_test, y_test):
 
     return results
 
-
 def main():
-    df = load_data()
-    raw_feature_cols = RAW_NUM_COLS + RAW_CAT_COLS
-    X = df[raw_feature_cols]
-    y = df["Churn"]
-
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42, stratify=y
-    )
+    X_train, X_test, y_train, y_test = get_train_test_data()
 
     results = evaluate_models(X_train, y_train, X_test, y_test)
 
@@ -276,7 +238,5 @@ def main():
     print(f"Successfully saved Day 4 champion model to: {CHURN_V4_MODEL_PATH}")
     print(f"Successfully refreshed active champion model at: {CHAMPION_MODEL_PATH}")
 
-
 if __name__ == "__main__":
     main()
-
