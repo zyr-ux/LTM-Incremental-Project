@@ -71,8 +71,23 @@ All models are trained with identical preprocessing (`StandardScaler` + `OneHotE
 | **Random Forest + PCA (15 comps)** | 80.06% | 67.82% | 47.33% | 55.75% | 84.14% | Bagging + PCA Reduction |
 | **XGBoost + PCA (15 comps)** | 81.05% | **68.38%** | 53.21% | **59.85%** | 84.77% | Boosting + PCA Reduction |
 | **XGBoost (Day 4 FE Champion)** | **80.55%** | 67.48% | 51.60% | 58.48% | **84.82%** | **Phase-1 Production Champion (`churn_v4.joblib`)** |
+| **Day 5 ANN (Keras Feed-Forward)** | 78.85% | 60.67% | 57.75% | 59.18% | 83.95% | Deep Learning Propensity Model (`churn_ann_v5.keras`) |
 
 > **Phase-1 Production Champion Lock**: **XGBoost** with engineered domain features (`n_estimators=100`, `max_depth=3`, `learning_rate=0.05`, `subsample=0.8`, `colsample_bytree=0.8`) is locked as the **Day 4 & Phase-1 deliverable champion** (Milestone Assessment 2) and persisted to `models/churn_v4.joblib` (and active `models/churn_pipeline_champion.joblib`). It delivers the highest holdout ROC-AUC (**84.82%**) and 5-fold CV ROC-AUC (**0.8495**), with a minimal generalization gap ($0.0198$), superior precision ($67.48\%$), and fully frozen end-to-end preprocessing.
+
+---
+
+## 🧠 Deep Learning vs Classical ML: When to Use Which?
+
+In Day 5, we trained a feed-forward Artificial Neural Network (Keras `Dense` layers with ReLU, Dropout, and Sigmoid output) and evaluated it directly against the Phase-1 XGBoost champion:
+
+| Decision Factor | Classical ML (XGBoost / LightGBM) | Deep Learning (ANNs / DNNs) |
+| :--- | :--- | :--- |
+| **Tabular Data Performance** | **Superior** (ROC-AUC 84.82% vs 83.95%). Tree algorithms partition tabular, heterogeneous feature spaces natively. | Competitive but susceptible to plateauing without massive sample volume. |
+| **Sample Efficiency** | High; strong performance on 5,000–50,000 rows. | Lower; requires larger datasets ($>10^5-10^6$ rows) to outperform boosting. |
+| **Training & Hyperparameters** | Fast, robust convergence with standard hyperparameter grids. | Sensitive to architecture, learning rates, batch size, and regularization. |
+| **Multimodal & Unstructured** | Weak; cannot natively process raw images, text, or graph embeddings without heavy feature extraction. | **Dominant**; seamlessly combines tabular metadata, text tokens, embeddings, and time series sequences. |
+| **Recommendation for RetailMind AI** | **Keep XGBoost as Phase-1 Champion** for tabular churn prediction. | **Deploy Neural Networks** when RetailMind expands to unstructured multimodal data (product imagery, customer review NLP, clickstream sequence embeddings). |
 
 ---
 
@@ -140,6 +155,15 @@ pip install -r requirements.txt
   python src/feature_engineering_and_ensembles.py
   ```
   This computes tenure buckets, financial charge velocity ratios, and contract/service interaction flags, benchmarks PCA dimensionality reduction against bagging and gradient boosting, and locks the finalized production model to `models/churn_v4.joblib` and `models/churn_pipeline_champion.joblib`.
+- To run Day 5 Keras MNIST Warm-Up Demo:
+  ```bash
+  python src/mnist_demo.py
+  ```
+- To train Day 5 Feed-Forward ANN & Benchmark Against Phase-1 Champion:
+  ```bash
+  python src/ann_churn_model.py
+  ```
+  This builds a normalized feed-forward neural network with early stopping, saves `models/churn_ann_v5.keras`, and runs a head-to-head benchmark against the Phase-1 champion.
 
 ### 3. Inference via Churn Service
 Use the standalone service helper in `src/service.py`:

@@ -1,5 +1,41 @@
+# FastAPI backend
+fastapi
+uvicorn
+pydantic
+python-multipart
+python-dotenv
+
+# Database
+sqlalchemy
+alembic
+
+# Data / ML
+numpy
 pandas
 scikit-learn
 joblib
+keras
+tensorflow
+pillow
 xgboost
 
+# Graphs
+matplotlib
+seaborn
+
+# API / HTTP
+requests
+httpx
+
+# Streamlit
+streamlit
+
+# Jupyter / Notebooks
+notebook
+ipykernel
+ipython
+jupyter_client
+jupyter_core
+
+# Development / Type Checking
+ty
