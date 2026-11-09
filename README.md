@@ -12,11 +12,13 @@ RetailMind AI is an end-to-end retail AI platform built incrementally across 35 
 - **Champion**: XGBoost with domain feature engineering (`models/churn_v4.joblib` / `churn_pipeline_champion.joblib`), reaching **84.82% ROC-AUC**.
 - **Inference Service**: `src/service.py` (`predict_churn`).
 
-### 2. Product Catalog Vision Module (Days 6–7)
+### 2. Product Catalog Vision Module (Days 6–8)
 - **Datasets**: Fashion-MNIST & [Fashion Product Images](https://huggingface.co/datasets/ashraq/fashion-product-images-small) (auto-downloaded)
-- **Core Libraries**: `keras`, `tensorflow`, `ultralytics`, `pillow`, `pyarrow`
+- **Core Libraries**: `keras`, `tensorflow`, `opencv-python`, `ultralytics`, `pillow`, `pyarrow`
 - **Champion**: MobileNetV2 Transfer Learning (`models/product_catalog_transfer_v7.keras`), reaching **97.70% Accuracy** + YOLOv8n object detection (`models/yolov8n.pt`).
-- **Inference Service**: `src/vision_module.py` (`analyze_catalog_image`).
+- **Segmentation & Background Removal**: `src/catalog_segmenter.py` (product masking & uniform background compositing via OpenCV).
+- **Explainability**: `src/catalog_explainability.py` (Grad-CAM heatmaps & overlay generation via TensorFlow gradients).
+- **Unified CV Service**: `src/vision_module.py` (`process_catalog_item`, `analyze_catalog_image`).
 
 ---
 
@@ -142,9 +144,9 @@ A 5-fold cross-validated learning curve analysis on the locked champion confirms
 
 ---
 
-## 🖼 Product Catalog Computer Vision Modules (Days 6 & 7)
+## 🖼 Product Catalog Computer Vision Modules (Days 6–8)
 
-Day 6 and Day 7 establish RetailMind AI's vision capability for catalog auto-tagging, quality assurance, and shelf analytics.
+Days 6 to 8 establish RetailMind AI's complete computer vision platform for catalog auto-tagging, quality assurance, background standardization, and model explainability.
 
 ### Transfer Learning Benchmark ($N = 1,000$ Holdout Images)
 
@@ -153,9 +155,11 @@ Day 6 and Day 7 establish RetailMind AI's vision capability for catalog auto-tag
 | **Day 6 From-Scratch CNN** | 94.10% | 0.96 | 0.89 | 0.97 | 0.87 | Baseline CNN |
 | **Day 7 Transfer Learning (MobileNetV2)** | **97.70%** | **0.99** | **0.96** | **0.99** | **0.93** | **Production Vision Champion** |
 
-### Where Object Detection (YOLOv8) Adds Value
-1. **Automated Catalog QA**: Verifies valid product presence and flags empty or incorrect supplier uploads.
-2. **Multi-Product Parsing**: Extracts individual items (e.g. top, pants, bag) from a single lifestyle model image for independent indexing.
+### Computer Vision Capabilities (Phase 2 Close)
+1. **Transfer Learning Classification**: Fast MobileNetV2 backbone classifying items into 4 retail categories (`Apparel`, `Accessories`, `Footwear`, `Personal Care`) at 97.70% accuracy.
+2. **Object Detection**: YOLOv8n identifies objects to verify catalog uploads and flag invalid supplier images.
+3. **Foreground Segmentation & Background Cleaning**: OpenCV-powered masking removes noisy backgrounds and composites products onto clean, uniform catalog backgrounds.
+4. **Grad-CAM Explainability**: Visual heatmaps show catalog review teams exactly which image regions drove the model's decision.
 3. **Shelf & Planogram Analytics**: Counts facings on store shelves and spots out-of-stock gaps.
 
 ---
@@ -261,7 +265,19 @@ print(result)
 # Output: {'churn_prediction': 1, 'churn_probability': 0.8048, 'risk_level': 'High'}
 ```
 
-#### Catalog Image Classification & Detection Service
+#### End-to-End Catalog Vision Pipeline (Phase 2 Deliverable)
+```python
+from src.vision_module import process_catalog_item
+
+result = process_catalog_item("path/to/catalog_image.jpg")
+print(result["classification"])          # {'predicted_category': 'Apparel', 'confidence': 1.0, ...}
+print(result["detections"])              # [{'label': 'person', 'confidence': 0.89, 'box': [...]}]
+print(result["qa_status"])               # 'Passed'
+# result["clean_image"]                  # Clean product image composited on uniform white
+# result["explainability_overlay"]       # Grad-CAM heatmap overlay for explainability
+```
+
+#### Catalog Image QA Inspection (Lightweight)
 ```python
 from src.vision_module import analyze_catalog_image
 

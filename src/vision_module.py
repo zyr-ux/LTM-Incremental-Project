@@ -1,10 +1,12 @@
-import sys
 from pathlib import Path
 import json
 import numpy as np
 from PIL import Image
 import keras
+
 from src.catalog_detector import detect_catalog_objects
+from src.catalog_segmenter import segment_product, composite_on_background
+from src.catalog_explainability import generate_gradcam, overlay_gradcam
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 MODEL_PATH = ROOT_DIR / "models" / "product_catalog_transfer_v7.keras"
@@ -42,16 +44,37 @@ def classify_product(image_input) -> dict:
     pred_idx = int(np.argmax(probs))
     return {
         "predicted_category": classes.get(pred_idx, "Unknown"),
+        "class_id": pred_idx,
         "confidence": round(float(probs[pred_idx]), 4),
         "all_probabilities": {classes[i]: round(float(probs[i]), 4) for i in range(len(classes))},
     }
 
-def analyze_catalog_image(image_input) -> dict:
+# Unified CV pipeline combining classification, detection, segmentation, and explainability
+def process_catalog_item(image_input, bg_color=(255, 255, 255)) -> dict:
     classification = classify_product(image_input)
     detections = detect_catalog_objects(image_input)
+    mask = segment_product(image_input)
+    clean_image = composite_on_background(image_input, mask, bg_color=bg_color)
+    gradcam_heatmap = generate_gradcam(image_input, class_idx=classification["class_id"])
+    explainability_overlay = overlay_gradcam(image_input, gradcam_heatmap)
+
+    qa_passed = len(detections) > 0 or classification["confidence"] > 0.8
+
     return {
         "classification": classification,
         "detections": detections,
-        "qa_status": "Passed" if len(detections) > 0 or classification["confidence"] > 0.8 else "Needs Review",
+        "segmentation_mask": mask,
+        "clean_image": clean_image,
+        "gradcam_heatmap": gradcam_heatmap,
+        "explainability_overlay": explainability_overlay,
+        "qa_status": "Passed" if qa_passed else "Needs Review",
     }
 
+# Backward-compatible lightweight inspection
+def analyze_catalog_image(image_input) -> dict:
+    result = process_catalog_item(image_input)
+    return {
+        "classification": result["classification"],
+        "detections": result["detections"],
+        "qa_status": result["qa_status"],
+    }
