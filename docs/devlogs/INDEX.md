@@ -10,3 +10,4 @@ This index stores references and links to all per-day developer logs across the 
 - [Day 04](DAY_04_DEVLOG.md) $\rightarrow$ Domain feature engineering, PCA reduction, ensemble boosting/bagging (Random Forest vs XGBoost), pipeline freezing, and Phase-1 champion lock (`churn_v4.joblib`)
 - [Day 05](DAY_05_DEVLOG.md) $\rightarrow$ Neural Networks & Keras ANN customer propensity model, MNIST warm-up, early stopping, and classical ML vs deep learning benchmark
 - [Day 06](DAY_06_DEVLOG.md) $\rightarrow$ Computer Vision Module 1: Convolutional Neural Networks (CNN), Fashion-MNIST prototype, Catalog Image classification with data augmentation, confusion matrix diagnostics, and catalog inference service
+- [Day 07](DAY_07_DEVLOG.md) $\rightarrow$ Computer Vision Module 2: Transfer learning with pretrained MobileNetV2 backbone, top-layer fine-tuning, YOLOv8 object detection, catalog QA, and integrated vision service

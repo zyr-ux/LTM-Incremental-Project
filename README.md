@@ -4,13 +4,19 @@ RetailMind AI is an end-to-end retail AI platform built incrementally across 35 
 
 ---
 
-## 🎯 Customer Churn Prediction Module
+## 🎯 Platform Modules
 
-The initial platform service establishes RetailMind's machine learning backbone by shipping a working, persisted customer churn prediction model exposed as an inference service to flag at-risk customers proactively.
-
+### 1. Customer Churn Propensity Module (Days 1–5)
 - **Dataset**: [Telco Customer Churn (WA_Fn-UseC_-Telco-Customer-Churn.csv)](data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv)
-- **Core Libraries**: `pandas`, `scikit-learn`, `xgboost`, `joblib`
-- **Workflow**: Ingest $\rightarrow$ Preprocess $\rightarrow$ Train Baseline $\rightarrow$ Evaluate $\rightarrow$ Persist pipeline $\rightarrow$ Serve predictions.
+- **Core Libraries**: `pandas`, `scikit-learn`, `xgboost`, `tensorflow`, `joblib`
+- **Champion**: XGBoost with domain feature engineering (`models/churn_v4.joblib` / `churn_pipeline_champion.joblib`), reaching **84.82% ROC-AUC**.
+- **Inference Service**: `src/service.py` (`predict_churn`).
+
+### 2. Product Catalog Vision Module (Days 6–7)
+- **Datasets**: Fashion-MNIST & [Fashion Product Images](https://huggingface.co/datasets/ashraq/fashion-product-images-small) (auto-downloaded)
+- **Core Libraries**: `keras`, `tensorflow`, `ultralytics`, `pillow`, `pyarrow`
+- **Champion**: MobileNetV2 Transfer Learning (`models/product_catalog_transfer_v7.keras`), reaching **97.70% Accuracy** + YOLOv8n object detection (`models/yolov8n.pt`).
+- **Inference Service**: `src/vision_module.py` (`analyze_catalog_image`).
 
 ---
 
@@ -20,22 +26,49 @@ The initial platform service establishes RetailMind's machine learning backbone 
 LTM Incremental Project/
 ├── data/
 │   ├── raw/
+│   │   ├── WA_Fn-UseC_-Telco-Customer-Churn.csv
+│   │   └── fashion_products/ (gitignored, auto-downloaded)
 │   └── processed/
+│       └── telco_churn_clean.csv
 ├── docs/
 │   └── devlogs/
+│       ├── DAY_01_DEVLOG.md
+│       ├── DAY_02_DEVLOG.md
+│       ├── DAY_03_DEVLOG.md
+│       ├── DAY_04_DEVLOG.md
+│       ├── DAY_05_DEVLOG.md
+│       ├── DAY_06_DEVLOG.md
+│       ├── DAY_07_DEVLOG.md
+│       └── INDEX.md
 ├── models/
+│   ├── ann_preprocessor_v5.joblib
+│   ├── churn_ann_v5.keras
 │   ├── churn_pipeline_baseline.joblib
 │   ├── churn_pipeline_champion.joblib
 │   ├── churn_v3.joblib
-│   └── churn_v4.joblib
+│   ├── churn_v4.joblib
+│   ├── product_catalog_classes_v6.json
+│   ├── product_catalog_classes_v7.json
+│   ├── product_catalog_cnn_v6.keras
+│   ├── product_catalog_transfer_v7.keras
+│   └── yolov8n.pt
 ├── notebooks/
 ├── src/
 │   ├── __init__.py
+│   ├── preprocessing.py
 │   ├── pipeline.py
 │   ├── compare_models.py
 │   ├── tune_and_diagnose.py
 │   ├── feature_engineering_and_ensembles.py
-│   └── service.py
+│   ├── service.py
+│   ├── mnist_demo.py
+│   ├── ann_churn_model.py
+│   ├── fashion_mnist_cnn.py
+│   ├── catalog_cnn.py
+│   ├── catalog_service.py
+│   ├── transfer_classifier.py
+│   ├── catalog_detector.py
+│   └── vision_module.py
 ├── .gitignore
 ├── requirements.txt
 └── README.md
@@ -73,7 +106,7 @@ All models are trained with identical preprocessing (`StandardScaler` + `OneHotE
 | **XGBoost (Day 4 FE Champion)** | **80.55%** | 67.48% | 51.60% | 58.48% | **84.82%** | **Phase-1 Production Champion (`churn_v4.joblib`)** |
 | **Day 5 ANN (Keras Feed-Forward)** | 78.85% | 60.67% | 57.75% | 59.18% | 83.95% | Deep Learning Propensity Model (`churn_ann_v5.keras`) |
 
-> **Phase-1 Production Champion Lock**: **XGBoost** with engineered domain features (`n_estimators=100`, `max_depth=3`, `learning_rate=0.05`, `subsample=0.8`, `colsample_bytree=0.8`) is locked as the **Day 4 & Phase-1 deliverable champion** (Milestone Assessment 2) and persisted to `models/churn_v4.joblib` (and active `models/churn_pipeline_champion.joblib`). It delivers the highest holdout ROC-AUC (**84.82%**) and 5-fold CV ROC-AUC (**0.8495**), with a minimal generalization gap ($0.0198$), superior precision ($67.48\%$), and fully frozen end-to-end preprocessing.
+> **Phase-1 Production Champion Lock**: **XGBoost** with engineered domain features (`n_estimators=100`, `max_depth=3`, `learning_rate=0.05`, `subsample=0.8`, `colsample_bytree=0.8`) is locked as the **Day 4 & Phase-1 deliverable champion** and persisted to `models/churn_v4.joblib` (and active `models/churn_pipeline_champion.joblib`). It delivers the highest holdout ROC-AUC (**84.82%**) and 5-fold CV ROC-AUC (**0.8495**), with a minimal generalization gap (**0.0198**), superior precision (**67.48\%**), and fully frozen end-to-end preprocessing.
 
 ---
 
@@ -109,6 +142,24 @@ A 5-fold cross-validated learning curve analysis on the locked champion confirms
 
 ---
 
+## 🖼 Product Catalog Computer Vision Modules (Days 6 & 7)
+
+Day 6 and Day 7 establish RetailMind AI's vision capability for catalog auto-tagging, quality assurance, and shelf analytics.
+
+### Transfer Learning Benchmark ($N = 1,000$ Holdout Images)
+
+| Architecture / Model | Overall Accuracy | Apparel F1 | Accessories F1 | Footwear F1 | Personal Care F1 | Status |
+| :--- | :---: | :---: | :---: | :---: | :---: | :--- |
+| **Day 6 From-Scratch CNN** | 94.10% | 0.96 | 0.89 | 0.97 | 0.87 | Baseline CNN |
+| **Day 7 Transfer Learning (MobileNetV2)** | **97.70%** | **0.99** | **0.96** | **0.99** | **0.93** | **Production Vision Champion** |
+
+### Where Object Detection (YOLOv8) Adds Value
+1. **Automated Catalog QA**: Verifies valid product presence and flags empty or incorrect supplier uploads.
+2. **Multi-Product Parsing**: Extracts individual items (e.g. top, pants, bag) from a single lifestyle model image for independent indexing.
+3. **Shelf & Planogram Analytics**: Counts facings on store shelves and spots out-of-stock gaps.
+
+---
+
 ## 📝 Developer Logs
 
 Detailed iteration notes, architectural decisions, data audits, and experiment analyses are recorded daily.
@@ -136,62 +187,50 @@ pip install -r requirements.txt
 ```
 
 ### 2. Run Training & Evaluation Pipelines
-- To train the baseline Logistic Regression model:
+- **Baseline Churn Model (Logistic Regression)**:
   ```bash
   python src/pipeline.py
   ```
-- To train and compare Decision Tree, Random Forest, and SVM models:
+- **Compare Classical ML Models (Decision Tree, RF, SVM)**:
   ```bash
   python src/compare_models.py
   ```
-  This trains candidate models with consistent preprocessing, evaluates them against the holdout set, and saves the candidate pipeline.
-- To execute Day 3 Multi-Model Grid Search, Bias-Variance Diagnostics, and Learning Curves:
+- **GridSearchCV Hyperparameter Tuning & Learning Curves**:
   ```bash
   python src/tune_and_diagnose.py
   ```
-  This tunes hyperparameter grids across all models using 5-fold cross-validation, runs learning curve diagnostics, and locks the champion model to `models/churn_v3.joblib`.
-- To execute Day 4 Feature Engineering, PCA Analysis, Ensemble Boosting/Bagging & Finalize Phase-1 Model:
+- **Feature Engineering, PCA & XGBoost Champion Lock**:
   ```bash
   python src/feature_engineering_and_ensembles.py
   ```
-  This computes tenure buckets, financial charge velocity ratios, and contract/service interaction flags, benchmarks PCA dimensionality reduction against bagging and gradient boosting, and locks the finalized production model to `models/churn_v4.joblib` and `models/churn_pipeline_champion.joblib`.
-- To run Day 5 Keras MNIST Warm-Up Demo:
+- **Keras MNIST Warm-Up Demo**:
   ```bash
   python src/mnist_demo.py
   ```
-- To train Day 5 Feed-Forward ANN & Benchmark Against Phase-1 Champion:
+- **Feed-Forward ANN Churn Model & Benchmark**:
   ```bash
   python src/ann_churn_model.py
   ```
-  This builds a normalized feed-forward neural network with early stopping, saves `models/churn_ann_v5.keras`, and runs a head-to-head benchmark against the Phase-1 champion.
-- To run Day 6 Fashion-MNIST CNN Prototype:
+- **Fashion-MNIST CNN Prototype**:
   ```bash
   python src/fashion_mnist_cnn.py
   ```
-- To train Day 6 Catalog Image Classification CNN & Confusion Matrix:
+- **Catalog Image Classifier (From-Scratch CNN)**:
   ```bash
   python src/catalog_cnn.py
   ```
-  This trains the image classifier with real-time data augmentation on product imagery, saves `models/product_catalog_cnn_v6.keras`, and outputs confusion matrix diagnostics.
+- **Transfer Learning Classifier (MobileNetV2 + Fine-Tuning)**:
+  ```bash
+  python src/transfer_classifier.py
+  ```
+- **YOLOv8 Object Detection Demo**:
+  ```bash
+  python src/catalog_detector.py
+  ```
 
----
+### 3. Production Inference Services
 
-## 🖼 Product Catalog Computer Vision Module (Day 6)
-
-Day 6 introduces automated catalog tagging to reduce manual entry and power downstream visual search.
-
-- **Architecture**: Conv2D ($3\times3$) $\rightarrow$ MaxPool $\rightarrow$ Conv2D ($3\times3$) $\rightarrow$ MaxPool $\rightarrow$ Dropout ($0.25$) $\rightarrow$ Dense ($64$) $\rightarrow$ Dense ($4$, Softmax)
-- **Data Augmentation**: `RandomFlip`, `RandomRotation(0.05)`, `RandomZoom(0.05)`
-- **Holdout Test Accuracy**: **94.10%** ($N = 1,000$ product images)
-- **Per-Category Performance**:
-  - `Apparel`: 96% Precision, 96% Recall
-  - `Footwear`: 98% Precision, 96% Recall
-  - `Accessories`: 88% Precision, 92% Recall
-  - `Personal Care`: 90% Precision, 84% Recall
-- **Inference Service**: `src/catalog_service.py` provides `classify_product_image()` for instant catalog tagging on image upload.
-
-### 3. Inference via Churn Service
-Use the standalone service helper in `src/service.py`:
+#### Customer Churn Prediction Service
 ```python
 from src.service import predict_churn
 
@@ -220,4 +259,18 @@ sample_customer = {
 result = predict_churn(sample_customer)
 print(result)
 # Output: {'churn_prediction': 1, 'churn_probability': 0.8048, 'risk_level': 'High'}
+```
+
+#### Catalog Image Classification & Detection Service
+```python
+from src.vision_module import analyze_catalog_image
+
+result = analyze_catalog_image("path/to/catalog_image.jpg")
+print(result)
+# Output:
+# {
+#   'classification': {'predicted_category': 'Apparel', 'confidence': 1.0, ...},
+#   'detections': [{'label': 'person', 'confidence': 0.89, 'box': [...]}, ...],
+#   'qa_status': 'Passed'
+# }
 ```
