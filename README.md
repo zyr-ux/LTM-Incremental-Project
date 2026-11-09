@@ -164,6 +164,31 @@ pip install -r requirements.txt
   python src/ann_churn_model.py
   ```
   This builds a normalized feed-forward neural network with early stopping, saves `models/churn_ann_v5.keras`, and runs a head-to-head benchmark against the Phase-1 champion.
+- To run Day 6 Fashion-MNIST CNN Prototype:
+  ```bash
+  python src/fashion_mnist_cnn.py
+  ```
+- To train Day 6 Catalog Image Classification CNN & Confusion Matrix:
+  ```bash
+  python src/catalog_cnn.py
+  ```
+  This trains the image classifier with real-time data augmentation on product imagery, saves `models/product_catalog_cnn_v6.keras`, and outputs confusion matrix diagnostics.
+
+---
+
+## 🖼 Product Catalog Computer Vision Module (Day 6)
+
+Day 6 introduces automated catalog tagging to reduce manual entry and power downstream visual search.
+
+- **Architecture**: Conv2D ($3\times3$) $\rightarrow$ MaxPool $\rightarrow$ Conv2D ($3\times3$) $\rightarrow$ MaxPool $\rightarrow$ Dropout ($0.25$) $\rightarrow$ Dense ($64$) $\rightarrow$ Dense ($4$, Softmax)
+- **Data Augmentation**: `RandomFlip`, `RandomRotation(0.05)`, `RandomZoom(0.05)`
+- **Holdout Test Accuracy**: **94.10%** ($N = 1,000$ product images)
+- **Per-Category Performance**:
+  - `Apparel`: 96% Precision, 96% Recall
+  - `Footwear`: 98% Precision, 96% Recall
+  - `Accessories`: 88% Precision, 92% Recall
+  - `Personal Care`: 90% Precision, 84% Recall
+- **Inference Service**: `src/catalog_service.py` provides `classify_product_image()` for instant catalog tagging on image upload.
 
 ### 3. Inference via Churn Service
 Use the standalone service helper in `src/service.py`:
