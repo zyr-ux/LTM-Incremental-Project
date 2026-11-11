@@ -20,6 +20,13 @@ RetailMind AI is an end-to-end retail AI platform built incrementally across 35 
 - **Explainability**: `src/catalog_explainability.py` (Grad-CAM heatmaps & overlay generation via TensorFlow gradients).
 - **Unified CV Service**: `src/vision_module.py` (`process_catalog_item`, `analyze_catalog_image`).
 
+### 3. Demand Forecasting & Inventory Optimization Module (Day 9)
+- **Dataset**: [Store Item Demand Forecasting](data/raw/store_item_demand.csv) (auto-mirrored from Kaggle challenge)
+- **Core Libraries**: `keras`, `pandas`, `scikit-learn`, `joblib`, `numpy`, `matplotlib`
+- **Champion**: Deep LSTM Recurrent Neural Network (`models/demand_lstm_v9.keras`), reaching **18.01 MAE** and **13.77% MAPE** on holdout test set.
+- **Data Preprocessing & Scaling**: Supervised sliding-window transformation (lookback $W=12$ weeks) and MinMax normalization (`models/demand_scaler_v9.joblib`).
+- **Inference & Inventory Service**: `src/demand_service.py` (`predict_demand` with 1-week and multi-week autoregressive rollouts and dynamic safety stock reordering).
+
 ---
 
 ## 🏗 Repository Structure
@@ -29,10 +36,12 @@ LTM Incremental Project/
 ├── data/
 │   ├── raw/
 │   │   ├── WA_Fn-UseC_-Telco-Customer-Churn.csv
+│   │   ├── store_item_demand.csv
 │   │   └── fashion_products/ (gitignored, auto-downloaded)
 │   └── processed/
 │       └── telco_churn_clean.csv
 ├── docs/
+│   ├── demand_forecast_evaluation.png
 │   └── devlogs/
 │       ├── DAY_01_DEVLOG.md
 │       ├── DAY_02_DEVLOG.md
@@ -41,6 +50,8 @@ LTM Incremental Project/
 │       ├── DAY_05_DEVLOG.md
 │       ├── DAY_06_DEVLOG.md
 │       ├── DAY_07_DEVLOG.md
+│       ├── DAY_08_DEVLOG.md
+│       ├── DAY_09_DEVLOG.md
 │       └── INDEX.md
 ├── models/
 │   ├── ann_preprocessor_v5.joblib
@@ -49,6 +60,9 @@ LTM Incremental Project/
 │   ├── churn_pipeline_champion.joblib
 │   ├── churn_v3.joblib
 │   ├── churn_v4.joblib
+│   ├── demand_lstm_v9.keras
+│   ├── demand_scaler_metadata_v9.json
+│   ├── demand_scaler_v9.joblib
 │   ├── product_catalog_classes_v6.json
 │   ├── product_catalog_classes_v7.json
 │   ├── product_catalog_cnn_v6.keras
@@ -70,7 +84,11 @@ LTM Incremental Project/
 │   ├── catalog_service.py
 │   ├── transfer_classifier.py
 │   ├── catalog_detector.py
-│   └── vision_module.py
+│   ├── catalog_segmenter.py
+│   ├── catalog_explainability.py
+│   ├── vision_module.py
+│   ├── demand_forecast_lstm.py
+│   └── demand_service.py
 ├── .gitignore
 ├── requirements.txt
 └── README.md
@@ -173,120 +191,28 @@ Browse all daily logs in the [Devlogs Index](docs/devlogs/INDEX.md).
 
 ## 🚀 Quickstart & Usage
 
-### 1. Environment Setup (venv)
-Create and activate a virtual environment, then install the dependencies:
+### 1. Environment Setup
 
-**On Windows (PowerShell):**
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-```
+Create and activate a virtual environment, then install dependencies:
 
-**On macOS / Linux:**
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
+# Windows (PowerShell)
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+
+# macOS / Linux
+python3 -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 2. Run Training & Evaluation Pipelines
-- **Baseline Churn Model (Logistic Regression)**:
-  ```bash
-  python src/pipeline.py
-  ```
-- **Compare Classical ML Models (Decision Tree, RF, SVM)**:
-  ```bash
-  python src/compare_models.py
-  ```
-- **GridSearchCV Hyperparameter Tuning & Learning Curves**:
-  ```bash
-  python src/tune_and_diagnose.py
-  ```
-- **Feature Engineering, PCA & XGBoost Champion Lock**:
-  ```bash
-  python src/feature_engineering_and_ensembles.py
-  ```
-- **Keras MNIST Warm-Up Demo**:
-  ```bash
-  python src/mnist_demo.py
-  ```
-- **Feed-Forward ANN Churn Model & Benchmark**:
-  ```bash
-  python src/ann_churn_model.py
-  ```
-- **Fashion-MNIST CNN Prototype**:
-  ```bash
-  python src/fashion_mnist_cnn.py
-  ```
-- **Catalog Image Classifier (From-Scratch CNN)**:
-  ```bash
-  python src/catalog_cnn.py
-  ```
-- **Transfer Learning Classifier (MobileNetV2 + Fine-Tuning)**:
-  ```bash
-  python src/transfer_classifier.py
-  ```
-- **YOLOv8 Object Detection Demo**:
-  ```bash
-  python src/catalog_detector.py
-  ```
+### 2. Running Modules
 
-### 3. Production Inference Services
+All training pipelines and inference services live under `src/` and can be executed directly. For eg. :
 
-#### Customer Churn Prediction Service
-```python
-from src.service import predict_churn
-
-sample_customer = {
-    "gender": "Female",
-    "SeniorCitizen": 0,
-    "Partner": "Yes",
-    "Dependents": "No",
-    "tenure": 1,
-    "PhoneService": "No",
-    "MultipleLines": "No phone service",
-    "InternetService": "DSL",
-    "OnlineSecurity": "No",
-    "OnlineBackup": "Yes",
-    "DeviceProtection": "No",
-    "TechSupport": "No",
-    "StreamingTV": "No",
-    "StreamingMovies": "No",
-    "Contract": "Month-to-month",
-    "PaperlessBilling": "Yes",
-    "PaymentMethod": "Electronic check",
-    "MonthlyCharges": 29.85,
-    "TotalCharges": 29.85
-}
-
-result = predict_churn(sample_customer)
-print(result)
-# Output: {'churn_prediction': 1, 'churn_probability': 0.8048, 'risk_level': 'High'}
-```
-
-#### End-to-End Catalog Vision Pipeline (Phase 2 Deliverable)
-```python
-from src.vision_module import process_catalog_item
-
-result = process_catalog_item("path/to/catalog_image.jpg")
-print(result["classification"])          # {'predicted_category': 'Apparel', 'confidence': 1.0, ...}
-print(result["detections"])              # [{'label': 'person', 'confidence': 0.89, 'box': [...]}]
-print(result["qa_status"])               # 'Passed'
-# result["clean_image"]                  # Clean product image composited on uniform white
-# result["explainability_overlay"]       # Grad-CAM heatmap overlay for explainability
-```
-
-#### Catalog Image QA Inspection (Lightweight)
-```python
-from src.vision_module import analyze_catalog_image
-
-result = analyze_catalog_image("path/to/catalog_image.jpg")
-print(result)
-# Output:
-# {
-#   'classification': {'predicted_category': 'Apparel', 'confidence': 1.0, ...},
-#   'detections': [{'label': 'person', 'confidence': 0.89, 'box': [...]}, ...],
-#   'qa_status': 'Passed'
-# }
+```bash
+python src/feature_engineering_and_ensembles.py  # Churn tabular champion (XGBoost)
+python src/transfer_classifier.py                # Catalog vision champion (MobileNetV2)
+python src/demand_forecast_lstm.py               # Demand forecast champion (LSTM)
 ```
