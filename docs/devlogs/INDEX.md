@@ -12,3 +12,4 @@ This index stores references and links to all per-day developer logs across the 
 - [Day 06](DAY_06_DEVLOG.md) $\rightarrow$ Computer Vision Module 1: Convolutional Neural Networks (CNN), Fashion-MNIST prototype, Catalog Image classification with data augmentation, confusion matrix diagnostics, and catalog inference service
 - [Day 07](DAY_07_DEVLOG.md) $\rightarrow$ Computer Vision Module 2: Transfer learning with pretrained MobileNetV2 backbone, top-layer fine-tuning, YOLOv8 object detection, catalog QA, and integrated vision service
 - [Day 08](DAY_08_DEVLOG.md) $\rightarrow$ Computer Vision Module 3: Catalog image segmentation & background compositing, Grad-CAM explainability heatmaps, and unified Phase-2 CV module packaging
+- [Day 09](DAY_09_DEVLOG.md) $\rightarrow$ RNN / LSTM Demand Forecasting, time-series windowing, MAE/RMSE holdout evaluation, and inventory reorder planning service
