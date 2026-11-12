@@ -1,0 +1,33 @@
+{
+  "store_id": 1,
+  "item_id": 1,
+  "frequency": "W",
+  "input_steps": 12,
+  "forecast_horizon": 4,
+  "test_weeks": 12,
+  "metrics": {
+    "overall_mae": 21.45,
+    "overall_rmse": 27.89,
+    "overall_mape": 16.97,
+    "mae_per_step": [
+      14.08,
+      18.62,
+      25.22,
+      27.87
+    ]
+  },
+  "recent_history": [
+    201,
+    191,
+    174,
+    196,
+    180,
+    182,
+    171,
+    177,
+    160,
+    172,
+    161,
+    125
+  ]
+}

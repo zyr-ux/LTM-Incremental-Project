@@ -20,12 +20,13 @@ RetailMind AI is an end-to-end retail AI platform built incrementally across 35 
 - **Explainability**: `src/catalog_explainability.py` (Grad-CAM heatmaps & overlay generation via TensorFlow gradients).
 - **Unified CV Service**: `src/vision_module.py` (`process_catalog_item`, `analyze_catalog_image`).
 
-### 3. Demand Forecasting & Inventory Optimization Module (Day 9)
+### 3. Demand Forecasting & Inventory Optimization Module (Days 9–10)
 - **Dataset**: [Store Item Demand Forecasting](data/raw/store_item_demand.csv) (auto-mirrored from Kaggle challenge)
-- **Core Libraries**: `keras`, `pandas`, `scikit-learn`, `joblib`, `numpy`, `matplotlib`
-- **Champion**: Deep LSTM Recurrent Neural Network (`models/demand_lstm_v9.keras`), reaching **18.01 MAE** and **13.77% MAPE** on holdout test set.
-- **Data Preprocessing & Scaling**: Supervised sliding-window transformation (lookback $W=12$ weeks) and MinMax normalization (`models/demand_scaler_v9.joblib`).
-- **Inference & Inventory Service**: `src/demand_service.py` (`predict_demand` with 1-week and multi-week autoregressive rollouts and dynamic safety stock reordering).
+- **Core Libraries**: `keras`, `pandas`, `scikit-learn`, `joblib`, `numpy`, `matplotlib`, `seaborn`
+- **Day 9 Baseline Champion**: Deep LSTM Recurrent Neural Network (`models/demand_lstm_v9.keras`), reaching **18.01 MAE** and **13.77% MAPE** for 1-week ahead demand.
+- **Day 10 Multi-Horizon Champion**: Sequence-to-Sequence (Seq2Seq) with Bahdanau Additive Attention (`models/demand_seq2seq_attention_v10.keras`), reaching **14.08 MAE** on next-week demand (**+21.8% accuracy boost**) and **21.45 MAE** across a full 4-week multi-horizon forecast.
+- **Attention Diagnostics**: `docs/demand_attention_weights.png` (temporal attention alignment matrix showing look-back focus per forecast horizon step).
+- **Inference & Procurement Service**: `src/demand_service.py` (`predict_multi_step_demand` for 4-week multi-horizon replenishment schedules and `predict_demand` for backward-compatible rollouts).
 
 ---
 
@@ -41,7 +42,9 @@ LTM Incremental Project/
 │   └── processed/
 │       └── telco_churn_clean.csv
 ├── docs/
+│   ├── demand_attention_weights.png
 │   ├── demand_forecast_evaluation.png
+│   ├── demand_seq2seq_evaluation.png
 │   └── devlogs/
 │       ├── DAY_01_DEVLOG.md
 │       ├── DAY_02_DEVLOG.md
@@ -52,6 +55,7 @@ LTM Incremental Project/
 │       ├── DAY_07_DEVLOG.md
 │       ├── DAY_08_DEVLOG.md
 │       ├── DAY_09_DEVLOG.md
+│       ├── DAY_10_DEVLOG.md
 │       └── INDEX.md
 ├── models/
 │   ├── ann_preprocessor_v5.joblib
@@ -62,7 +66,10 @@ LTM Incremental Project/
 │   ├── churn_v4.joblib
 │   ├── demand_lstm_v9.keras
 │   ├── demand_scaler_metadata_v9.json
+│   ├── demand_scaler_v10.joblib
 │   ├── demand_scaler_v9.joblib
+│   ├── demand_seq2seq_attention_v10.keras
+│   ├── demand_seq2seq_metadata_v10.json
 │   ├── product_catalog_classes_v6.json
 │   ├── product_catalog_classes_v7.json
 │   ├── product_catalog_cnn_v6.keras
@@ -88,6 +95,7 @@ LTM Incremental Project/
 │   ├── catalog_explainability.py
 │   ├── vision_module.py
 │   ├── demand_forecast_lstm.py
+│   ├── demand_forecast_seq2seq.py
 │   └── demand_service.py
 ├── .gitignore
 ├── requirements.txt
