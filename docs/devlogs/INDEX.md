@@ -14,3 +14,4 @@ This index stores references and links to all per-day developer logs across the 
 - [Day 08](DAY_08_DEVLOG.md) $\rightarrow$ Computer Vision Module 3: Catalog image segmentation & background compositing, Grad-CAM explainability heatmaps, and unified Phase-2 CV module packaging
 - [Day 09](DAY_09_DEVLOG.md) $\rightarrow$ RNN / LSTM Demand Forecasting, time-series windowing, MAE/RMSE holdout evaluation, and inventory reorder planning service
 - [Day 10](DAY_10_DEVLOG.md) $\rightarrow$ Multi-Horizon Seq2Seq with Bahdanau Attention, attention heatmaps, single-step vs multi-step accuracy comparison, and multi-week procurement forecasting service
+- [Day 11](DAY_11_DEVLOG.md) $\rightarrow$ Generative Deep Learning (VAEs & GANs) for Image Augmentation, mode-collapse quality filtering, synthetic image balancing, and fairness/per-class accuracy lift

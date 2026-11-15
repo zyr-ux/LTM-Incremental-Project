@@ -1,0 +1,110 @@
+{
+  "overall_accuracy_baseline": 0.948,
+  "overall_accuracy_augmented": 0.941,
+  "target_class": "Personal Care",
+  "baseline_metrics": {
+    "Apparel": {
+      "precision": 0.9769392033542977,
+      "recall": 0.9568788501026694,
+      "f1-score": 0.966804979253112,
+      "support": 487.0
+    },
+    "Accessories": {
+      "precision": 0.8897058823529411,
+      "recall": 0.9307692307692308,
+      "f1-score": 0.9097744360902256,
+      "support": 260.0
+    },
+    "Footwear": {
+      "precision": 0.9800995024875622,
+      "recall": 0.9752475247524752,
+      "f1-score": 0.9776674937965261,
+      "support": 202.0
+    },
+    "Personal Care": {
+      "precision": 0.86,
+      "recall": 0.8431372549019608,
+      "f1-score": 0.8514851485148515,
+      "support": 51.0
+    }
+  },
+  "augmented_metrics": {
+    "Apparel": {
+      "precision": 0.9670781893004116,
+      "recall": 0.9650924024640657,
+      "f1-score": 0.9660842754367934,
+      "support": 487.0
+    },
+    "Accessories": {
+      "precision": 0.9015748031496063,
+      "recall": 0.8807692307692307,
+      "f1-score": 0.8910505836575876,
+      "support": 260.0
+    },
+    "Footwear": {
+      "precision": 0.9471153846153846,
+      "recall": 0.9752475247524752,
+      "f1-score": 0.9609756097560975,
+      "support": 202.0
+    },
+    "Personal Care": {
+      "precision": 0.8653846153846154,
+      "recall": 0.8823529411764706,
+      "f1-score": 0.8737864077669902,
+      "support": 51.0
+    }
+  },
+  "confusion_matrix_baseline": [
+    [
+      466,
+      18,
+      1,
+      2
+    ],
+    [
+      10,
+      242,
+      3,
+      5
+    ],
+    [
+      0,
+      5,
+      197,
+      0
+    ],
+    [
+      1,
+      7,
+      0,
+      43
+    ]
+  ],
+  "confusion_matrix_augmented": [
+    [
+      470,
+      15,
+      2,
+      0
+    ],
+    [
+      16,
+      229,
+      9,
+      6
+    ],
+    [
+      0,
+      4,
+      197,
+      1
+    ],
+    [
+      0,
+      6,
+      0,
+      45
+    ]
+  ],
+  "num_synthetic_samples_added": 150
+}

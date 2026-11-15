@@ -6,7 +6,9 @@ from PIL import Image
 import keras
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
-MODEL_PATH = ROOT_DIR / "models" / "product_catalog_cnn_v6.keras"
+DEFAULT_MODEL_PATH = ROOT_DIR / "models" / "product_catalog_cnn_augmented_v11.keras"
+FALLBACK_MODEL_PATH = ROOT_DIR / "models" / "product_catalog_cnn_v6.keras"
+MODEL_PATH = DEFAULT_MODEL_PATH if DEFAULT_MODEL_PATH.exists() else FALLBACK_MODEL_PATH
 METADATA_PATH = ROOT_DIR / "models" / "product_catalog_classes_v6.json"
 
 _model = None

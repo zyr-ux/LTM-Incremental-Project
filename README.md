@@ -28,6 +28,15 @@ RetailMind AI is an end-to-end retail AI platform built incrementally across 35 
 - **Attention Diagnostics**: `docs/demand_attention_weights.png` (temporal attention alignment matrix showing look-back focus per forecast horizon step).
 - **Inference & Procurement Service**: `src/demand_service.py` (`predict_multi_step_demand` for 4-week multi-horizon replenishment schedules and `predict_demand` for backward-compatible rollouts).
 
+### 4. Generative Data Augmentation & Vision Fairness Module (Day 11)
+- **Dataset**: [Fashion Product Images](https://huggingface.co/datasets/ashraq/fashion-product-images-small)
+- **Core Libraries**: `tensorflow`, `keras`, `pillow`, `pyarrow`, `scikit-learn`, `numpy`, `matplotlib`
+- **Generative VAE Models**: Trained Convolutional VAE (`models/vae_encoder_personal_care.keras`, `models/vae_decoder_personal_care.keras`) to synthesize realistic under-represented catalog items (`Personal Care`).
+- **Mode-Collapse & Quality Gate**: Statistical dispersion and brightness bounds to filter out low-contrast artifacts before dataset fold-in.
+- **Fairness & Per-Class Accuracy Lift**: Lifted minority class recall from **84.3% $\rightarrow$ 88.2%** (+3.9% lift) and F1 from **85.1% $\rightarrow$ 87.4%** (+2.3% lift) on holdout test set (`models/product_catalog_cnn_augmented_v11.keras`).
+- **Fairness Benchmark Report**: `docs/day11_synthetic_augmentation_results.png` and `docs/day11_augmentation_metrics.json`.
+- **Pipeline Script**: `src/generative_augmentation.py`.
+
 ---
 
 ## 🏗 Repository Structure
@@ -56,6 +65,7 @@ LTM Incremental Project/
 │       ├── DAY_08_DEVLOG.md
 │       ├── DAY_09_DEVLOG.md
 │       ├── DAY_10_DEVLOG.md
+│       ├── DAY_11_DEVLOG.md
 │       └── INDEX.md
 ├── models/
 │   ├── ann_preprocessor_v5.joblib
@@ -72,8 +82,11 @@ LTM Incremental Project/
 │   ├── demand_seq2seq_metadata_v10.json
 │   ├── product_catalog_classes_v6.json
 │   ├── product_catalog_classes_v7.json
+│   ├── product_catalog_cnn_augmented_v11.keras
 │   ├── product_catalog_cnn_v6.keras
 │   ├── product_catalog_transfer_v7.keras
+│   ├── vae_decoder_personal_care.keras
+│   ├── vae_encoder_personal_care.keras
 │   └── yolov8n.pt
 ├── notebooks/
 ├── src/
@@ -223,4 +236,5 @@ All training pipelines and inference services live under `src/` and can be execu
 python src/feature_engineering_and_ensembles.py  # Churn tabular champion (XGBoost)
 python src/transfer_classifier.py                # Catalog vision champion (MobileNetV2)
 python src/demand_forecast_lstm.py               # Demand forecast champion (LSTM)
+python src/generative_augmentation.py            # Generative VAE synthetic augmentation & fairness benchmark
 ```
