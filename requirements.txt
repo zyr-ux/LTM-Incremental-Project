@@ -19,6 +19,13 @@ tensorflow
 pillow
 xgboost
 
+# NLP & Transformers
+transformers
+torch
+datasets
+accelerate
+evaluate
+
 # Graphs
 matplotlib
 seaborn

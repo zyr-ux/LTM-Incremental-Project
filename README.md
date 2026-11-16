@@ -37,6 +37,16 @@ RetailMind AI is an end-to-end retail AI platform built incrementally across 35 
 - **Fairness Benchmark Report**: `docs/day11_synthetic_augmentation_results.png` and `docs/day11_augmentation_metrics.json`.
 - **Pipeline Script**: `src/generative_augmentation.py`.
 
+### 5. Text Intelligence & Support Ticket Routing Module (Day 12)
+- **Datasets**: Amazon Polarity product reviews (`fancyzhx/amazon_polarity`) and multi-department support tickets
+- **Core Libraries**: `transformers`, `torch`, `scikit-learn`, `datasets`, `pandas`, `numpy`, `matplotlib`
+- **Backbone**: DistilBERT (`distilbert-base-uncased`, 66M parameters) contextual embeddings via `[CLS]` token representation.
+- **Review Sentiment Benchmark**: Achieved **85.20% accuracy** and **85.19% macro F1** on balanced test reviews, surpassing TF-IDF + Logistic Regression classical baseline while providing richer semantic generalization.
+- **Support Ticket Router**: 4-class routing engine (`Delivery & Tracking`, `Refund & Billing`, `Product Quality & Defect`, `Account & Security`) with automatic priority escalation for security/billing issues.
+- **Inference Service**: `src/text_service.py` (`analyze_review_sentiment`, `route_support_ticket`).
+- **Diagnostics & Visualizations**: `docs/day12_bert_text_intelligence.png` and `models/text_intelligence_metadata_v12.json`.
+- **Pipeline Script**: `src/bert_text_intelligence.py`.
+
 ---
 
 ## 🏗 Repository Structure
@@ -49,8 +59,12 @@ LTM Incremental Project/
 │   │   ├── store_item_demand.csv
 │   │   └── fashion_products/ (gitignored, auto-downloaded)
 │   └── processed/
-│       └── telco_churn_clean.csv
+│       ├── telco_churn_clean.csv
+│       └── reviews_sentiment_sample.parquet
 ├── docs/
+│   ├── day11_augmentation_metrics.json
+│   ├── day11_synthetic_augmentation_results.png
+│   ├── day12_bert_text_intelligence.png
 │   ├── demand_attention_weights.png
 │   ├── demand_forecast_evaluation.png
 │   ├── demand_seq2seq_evaluation.png
@@ -66,9 +80,13 @@ LTM Incremental Project/
 │       ├── DAY_09_DEVLOG.md
 │       ├── DAY_10_DEVLOG.md
 │       ├── DAY_11_DEVLOG.md
+│       ├── DAY_12_DEVLOG.md
 │       └── INDEX.md
 ├── models/
 │   ├── ann_preprocessor_v5.joblib
+│   ├── bert_sentiment_head_v12.joblib
+│   ├── bert_ticket_head_v12.joblib
+│   ├── text_intelligence_metadata_v12.json
 │   ├── churn_ann_v5.keras
 │   ├── churn_pipeline_baseline.joblib
 │   ├── churn_pipeline_champion.joblib
@@ -109,7 +127,11 @@ LTM Incremental Project/
 │   ├── vision_module.py
 │   ├── demand_forecast_lstm.py
 │   ├── demand_forecast_seq2seq.py
-│   └── demand_service.py
+│   ├── demand_service.py
+│   ├── generative_augmentation.py
+│   ├── bert_text_intelligence.py
+│   ├── text_service.py
+│   └── test_text_service.py
 ├── .gitignore
 ├── requirements.txt
 └── README.md
@@ -237,4 +259,6 @@ python src/feature_engineering_and_ensembles.py  # Churn tabular champion (XGBoo
 python src/transfer_classifier.py                # Catalog vision champion (MobileNetV2)
 python src/demand_forecast_lstm.py               # Demand forecast champion (LSTM)
 python src/generative_augmentation.py            # Generative VAE synthetic augmentation & fairness benchmark
+python src/bert_text_intelligence.py             # DistilBERT sentiment & support ticket router
+python -m unittest discover -s src -p "test_*.py" # Run automated test suite
 ```

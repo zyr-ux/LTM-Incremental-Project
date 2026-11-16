@@ -15,3 +15,4 @@ This index stores references and links to all per-day developer logs across the 
 - [Day 09](DAY_09_DEVLOG.md) $\rightarrow$ RNN / LSTM Demand Forecasting, time-series windowing, MAE/RMSE holdout evaluation, and inventory reorder planning service
 - [Day 10](DAY_10_DEVLOG.md) $\rightarrow$ Multi-Horizon Seq2Seq with Bahdanau Attention, attention heatmaps, single-step vs multi-step accuracy comparison, and multi-week procurement forecasting service
 - [Day 11](DAY_11_DEVLOG.md) $\rightarrow$ Generative Deep Learning (VAEs & GANs) for Image Augmentation, mode-collapse quality filtering, synthetic image balancing, and fairness/per-class accuracy lift
+- [Day 12](DAY_12_DEVLOG.md) $\rightarrow$ Transformers & BERT for Retail Text Intelligence, DistilBERT contextual embeddings, TF-IDF baseline comparison, multi-class support ticket routing, and sentiment microservice
