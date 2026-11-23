@@ -1,12 +1,20 @@
 import json
 import os
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 from PIL import Image
 from src.marketing_diffusion import (
     BRAND_STYLE_PRESETS,
     DEFAULT_NEGATIVE_PROMPT,
     MarketingImageGenerator,
+)
+from src.product_variations import (
+    VARIATION_STYLES,
+    ProductVariationGenerator,
+)
+from src.promo_video_generator import (
+    build_promo_video,
+    generate_product_promo_clip,
 )
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
@@ -62,10 +70,43 @@ def save_prompt_library(prompts: List[Dict]):
         json.dump(prompts, f, indent=2)
 
 class MarketingCreativeService:
-    def __init__(self, generator: Optional[MarketingImageGenerator] = None):
+    def __init__(
+        self,
+        generator: Optional[MarketingImageGenerator] = None,
+        variation_generator: Optional[ProductVariationGenerator] = None
+    ):
         self.generator = generator or MarketingImageGenerator()
+        self.variation_generator = variation_generator or ProductVariationGenerator()
         if not PROMPT_LIBRARY_PATH.exists():
             save_prompt_library(DEFAULT_CAMPAIGN_PROMPTS)
+
+    def create_product_variations(
+        self,
+        init_image: Image.Image,
+        prompt: str,
+        strengths: Optional[List[float]] = None,
+        seed: int = 42
+    ) -> List[Dict[str, Any]]:
+        return self.variation_generator.sweep_variation_strengths(
+            init_image=init_image,
+            prompt=prompt,
+            strengths=strengths,
+            seed=seed
+        )
+
+    def create_promo_clip(
+        self,
+        base_image: Image.Image,
+        variation_images: List[Image.Image],
+        output_path: str = "docs/marketing_assets/promo_clip.mp4",
+        fps: int = 10
+    ) -> Dict[str, Any]:
+        return generate_product_promo_clip(
+            base_image=base_image,
+            variation_images=variation_images,
+            output_path=output_path,
+            fps=fps
+        )
 
     def create_product_marketing_asset(
         self,

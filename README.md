@@ -71,6 +71,13 @@ RetailMind AI is an end-to-end retail AI platform built incrementally across 35 
 - **Seed Control & Prompt Library**: Reproducible campaign recipes stored in `docs/marketing_prompt_library.json` and generated campaign assets in `docs/marketing_assets/`.
 - **Creative Service**: `src/marketing_service.py` (`create_product_marketing_asset`, `generate_campaign_assets`, `generate_marketing_image`).
 
+### 9. Diffusion Variations & Promo Video Generation (Day 16)
+- **Dataset / Inputs**: Real Catalog Images (`fashion-product-images-small`) & Curated Variation Prompts
+- **Core Libraries**: `diffusers`, `torch`, `Pillow`, `opencv-python`, `numpy`
+- **Image-to-Image Variations**: `src/product_variations.py` (`ProductVariationGenerator`) utilizing `StableDiffusionImg2ImgPipeline` with controlled denoising strength sweeps ($0.30 \rightarrow 0.85$) balancing catalog garment fidelity against creative seasonal adaptations.
+- **Promo Video Clip Assembly**: `src/promo_video_generator.py` (`generate_product_promo_clip`, `build_promo_video`) interpolating smooth alpha-blended transition frames between catalog products and generated variations, encoded to MP4 via OpenCV.
+- **Integrated Creative Service**: `src/marketing_service.py` (`create_product_variations`, `create_promo_clip`).
+
 ---
 
 ## 🏗 Repository Structure
@@ -104,6 +111,7 @@ LTM Incremental Project/
 │       ├── DAY_13_DEVLOG.md
 │       ├── DAY_14_DEVLOG.md
 │       ├── DAY_15_DEVLOG.md
+│       ├── DAY_16_DEVLOG.md
 │       └── INDEX.md
 ├── models/
 │   ├── ann_preprocessor_v5.joblib
@@ -164,7 +172,9 @@ LTM Incremental Project/
 │   ├── support_chatbot.py
 │   ├── assistant_service.py
 │   ├── marketing_diffusion.py
-│   └── marketing_service.py
+│   ├── marketing_service.py
+│   ├── product_variations.py
+│   └── promo_video_generator.py
 ├── .gitignore
 ├── requirements.txt
 └── README.md
