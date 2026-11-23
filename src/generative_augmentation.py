@@ -30,7 +30,7 @@ VAE_DECODER_PATH = ROOT_DIR / "models" / "vae_decoder_personal_care.keras"
 BASELINE_MODEL_PATH = ROOT_DIR / "models" / "product_catalog_cnn_v6.keras"
 AUGMENTED_MODEL_PATH = ROOT_DIR / "models" / "product_catalog_cnn_augmented_v11.keras"
 EVALUATION_PLOT_PATH = ROOT_DIR / "docs" / "day11_synthetic_augmentation_results.png"
-METRICS_REPORT_PATH = ROOT_DIR / "docs" / "day11_augmentation_metrics.json"
+METRICS_REPORT_PATH = ROOT_DIR / "models" / "day11_augmentation_metrics.json"
 
 CATEGORIES = ["Apparel", "Accessories", "Footwear", "Personal Care"]
 LABEL_TO_IDX = {cat: idx for idx, cat in enumerate(CATEGORIES)}

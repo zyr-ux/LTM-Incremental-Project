@@ -47,7 +47,7 @@ def test_marketing_service_asset_generation():
     prompts = load_prompt_library()
     assert len(prompts) >= 4
     
-    test_out = Path("docs/marketing_assets/test_asset.png")
+    test_out = Path("data/processed/marketing_assets/test_asset.png")
     result = service.create_product_marketing_asset(
         product_name="Navy Blue Shirt",
         category="Apparel",

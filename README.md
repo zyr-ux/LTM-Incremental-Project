@@ -34,7 +34,7 @@ RetailMind AI is an end-to-end retail AI platform built incrementally across 35 
 - **Generative VAE Models**: Trained Convolutional VAE (`models/vae_encoder_personal_care.keras`, `models/vae_decoder_personal_care.keras`) to synthesize realistic under-represented catalog items (`Personal Care`).
 - **Mode-Collapse & Quality Gate**: Statistical dispersion and brightness bounds to filter out low-contrast artifacts before dataset fold-in.
 - **Fairness & Per-Class Accuracy Lift**: Lifted minority class recall from **84.3% $\rightarrow$ 88.2%** (+3.9% lift) and F1 from **85.1% $\rightarrow$ 87.4%** (+2.3% lift) on holdout test set (`models/product_catalog_cnn_augmented_v11.keras`).
-- **Fairness Benchmark Report**: `docs/day11_synthetic_augmentation_results.png` and `docs/day11_augmentation_metrics.json`.
+- **Fairness Benchmark Report**: `docs/day11_synthetic_augmentation_results.png` and `models/day11_augmentation_metrics.json`.
 - **Pipeline Script**: `src/generative_augmentation.py`.
 
 ### 5. Review Intelligence & Sentiment Analysis Module (Day 12)
@@ -68,7 +68,7 @@ RetailMind AI is an end-to-end retail AI platform built incrementally across 35 
 - **Core Libraries**: `diffusers`, `torch`, `Pillow`, `numpy`, `json`
 - **Hardware-Resilient Generation**: Seamless execution on standard laptops (CPU preview rendering with deterministic texture & watermark branding) with automatic CUDA GPU acceleration when dedicated hardware is available.
 - **Brand Style Presets & Negative Prompting**: Curated prompts (`studio_minimalist`, `lifestyle_editorial`, `urban_streetwear`, `flatlay_ecommerce`) combined with quality suppression filters (negative prompts eliminating blur, distortion, and deformities).
-- **Seed Control & Prompt Library**: Reproducible campaign recipes stored in `docs/marketing_prompt_library.json` and generated campaign assets in `docs/marketing_assets/`.
+- **Seed Control & Prompt Library**: Reproducible campaign recipes stored in `data/processed/marketing_prompt_library.json` and generated campaign assets in `data/processed/marketing_assets/`.
 - **Creative Service**: `src/marketing_service.py` (`create_product_marketing_asset`, `generate_campaign_assets`, `generate_marketing_image`).
 
 ### 9. Diffusion Variations & Promo Video Generation (Day 16)
@@ -85,12 +85,17 @@ RetailMind AI is an end-to-end retail AI platform built incrementally across 35 
 ```text
 LTM Incremental Project/
 ├── data/
-│   ├── raw/
-│   │   ├── WA_Fn-UseC_-Telco-Customer-Churn.csv
-│   │   ├── store_item_demand.csv
-│   │   └── fashion_products/ (gitignored, auto-downloaded)
-│   └── processed/
-│       └── telco_churn_clean.csv
+│   ├── processed/
+│   │   ├── telco_churn_clean.csv
+│   │   ├── reviews_sentiment_sample.parquet
+│   │   ├── marketing_prompt_library.json
+│   │   └── marketing_assets/
+│   │       ├── activewear_launch_04.png
+│   │       ├── campaign_sample_promo.mp4
+│   │       ├── luxury_accessories_02.png
+│   │       ├── street_denim_03.png
+│   │       └── summer_apparel_01.png
+│   └── raw/
 ├── docs/
 │   ├── demand_attention_weights.png
 │   ├── demand_forecast_evaluation.png
@@ -122,6 +127,7 @@ LTM Incremental Project/
 │   ├── churn_pipeline_champion.joblib
 │   ├── churn_v3.joblib
 │   ├── churn_v4.joblib
+│   ├── day11_augmentation_metrics.json
 │   ├── demand_lstm_v9.keras
 │   ├── demand_scaler_metadata_v9.json
 │   ├── demand_scaler_v10.joblib

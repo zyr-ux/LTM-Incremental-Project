@@ -48,7 +48,7 @@ Omnichannel retail marketing demands dynamic visual variations for distinct camp
          [OpenCV MP4 Video Encoder]
                        │
                        ▼
-    docs/marketing_assets/*.mp4 (Promo Clip)
+    data/processed/marketing_assets/*.mp4 (Promo Clip)
 ```
 
 ### Components

@@ -50,7 +50,7 @@ def test_frame_interpolation():
     assert 90 <= mid_arr[50, 50, 0] <= 110
 
 def test_promo_video_generation():
-    test_out = Path("docs/marketing_assets/test_promo.mp4")
+    test_out = Path("data/processed/marketing_assets/test_promo.mp4")
     f1 = Image.new("RGB", (64, 64), color=(255, 0, 0))
     f2 = Image.new("RGB", (64, 64), color=(0, 255, 0))
     
@@ -77,7 +77,7 @@ def test_marketing_service_variations_and_video():
     )
     assert len(variations) == 2
     
-    video_out = Path("docs/marketing_assets/test_service_clip.mp4")
+    video_out = Path("data/processed/marketing_assets/test_service_clip.mp4")
     clip_res = service.create_promo_clip(
         base_image=init_img,
         variation_images=[variations[0]["image"], variations[1]["image"]],

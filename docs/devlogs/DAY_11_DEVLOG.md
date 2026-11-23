@@ -115,6 +115,6 @@ Personal Care                  0              6           0               45
 - `models/vae_decoder_personal_care.keras`: Trained image generator.
 - `models/product_catalog_cnn_augmented_v11.keras`: Retrained classifier benefiting from synthetic augmentation.
 - `docs/day11_synthetic_augmentation_results.png`: Multi-panel comparative visualization (synthetic samples, confusion matrices, per-class recall bars).
-- `docs/day11_augmentation_metrics.json`: Machine-readable benchmark metrics.
+- `models/day11_augmentation_metrics.json`: Machine-readable benchmark metrics.
 - `src/catalog_service.py`: Updated production catalog service to seamlessly utilize the augmented V11 model.
 

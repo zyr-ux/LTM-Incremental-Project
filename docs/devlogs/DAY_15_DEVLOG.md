@@ -20,7 +20,7 @@ High-conversion retail campaigns and e-commerce product pages require rich visua
 - **Hardware-Aware Design (Non-Nvidia / CPU Resilient)**: Standard laptops without discrete Nvidia CUDA GPUs run generation via deterministic, lightweight CPU preview synthesis, with automatic GPU acceleration when CUDA is available.
 - **Structured Prompt Templating**: Combine product metadata (`productDisplayName`, `masterCategory`, `subCategory`, `baseColour`) with curated retail marketing presets (`studio_minimalist`, `lifestyle_editorial`, `urban_streetwear`, `flatlay_ecommerce`).
 - **Quality & Artifact Suppression**: Utilize negative prompts targeting blurry, low-resolution, warped, or cartoonish imagery, with tunable classifier-free guidance scales ($7.0 - 8.5$).
-- **Seed-Controlled Prompt Library**: Curate and persist reproducible campaign recipes (`docs/marketing_prompt_library.json`) and store reproducible campaign image previews in `docs/marketing_assets/`.
+- **Seed-Controlled Prompt Library**: Curate and persist reproducible campaign recipes (`data/processed/marketing_prompt_library.json`) and store reproducible campaign image previews in `data/processed/marketing_assets/`.
 
 ---
 
@@ -45,18 +45,18 @@ High-conversion retail campaigns and e-commerce product pages require rich visua
                      ▼
        [Reproducible Asset Delivery]
         - Fixed Generator Seed (e.g. 101, 202)
-        - docs/marketing_prompt_library.json
-        - docs/marketing_assets/*.png
+        - data/processed/marketing_prompt_library.json
+        - data/processed/marketing_assets/*.png
 ```
 
 ### Components
 1. **Diffusion Pipeline & Generator (`src/marketing_diffusion.py`)**:
    - `MarketingImageGenerator`: Encapsulates prompt compilation, guidance scale tuning, negative prompt injection, seed control, and device detection.
 2. **Creative Service & Prompt Library (`src/marketing_service.py`)**:
-   - Manages prompt library loading/saving (`docs/marketing_prompt_library.json`).
+   - Manages prompt library loading/saving (`data/processed/marketing_prompt_library.json`).
    - Generates reproducible campaign batches (`generate_campaign_assets`).
    - Exposes clean module facade `generate_marketing_image`.
-3. **Prompt Library (`docs/marketing_prompt_library.json`)**:
+3. **Prompt Library (`data/processed/marketing_prompt_library.json`)**:
    - Standardized recipes for seasonal apparel, luxury timepieces, denim streetwear, and activewear launches.
 
 ---

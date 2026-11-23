@@ -18,7 +18,7 @@ from src.promo_video_generator import (
 )
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
-PROMPT_LIBRARY_PATH = ROOT_DIR / "docs" / "marketing_prompt_library.json"
+PROMPT_LIBRARY_PATH = ROOT_DIR / "data" / "processed" / "marketing_prompt_library.json"
 
 DEFAULT_CAMPAIGN_PROMPTS = [
     {
@@ -98,7 +98,7 @@ class MarketingCreativeService:
         self,
         base_image: Image.Image,
         variation_images: List[Image.Image],
-        output_path: str = "docs/marketing_assets/promo_clip.mp4",
+        output_path: str = "data/processed/marketing_assets/promo_clip.mp4",
         fps: int = 10
     ) -> Dict[str, Any]:
         return generate_product_promo_clip(
@@ -149,7 +149,7 @@ class MarketingCreativeService:
 
     def generate_campaign_assets(
         self,
-        output_dir: str = "docs/marketing_assets",
+        output_dir: str = "data/processed/marketing_assets",
         max_items: int = 4
     ) -> List[Dict]:
         prompts = load_prompt_library()[:max_items]
