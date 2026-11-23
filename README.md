@@ -45,6 +45,16 @@ RetailMind AI is an end-to-end retail AI platform built incrementally across 35 
 - **Insight Diagnostics**: `docs/day12_classical_sentiment_insights.png` (lexical drivers for positive vs negative customer sentiment).
 - **Inference Service**: `src/review_service.py` (`ReviewSentimentService`).
 
+### 6. Retail Text Intelligence & Ticket Routing Module (Day 13)
+- **Dataset**: Amazon Customer Reviews (`data/processed/reviews_sentiment_sample.parquet`) & Synthesized Customer Support Ticket Corpus (1,200 multi-department retail tickets)
+- **Core Libraries**: `transformers`, `torch`, `scikit-learn`, `datasets`, `pandas`, `numpy`, `matplotlib`
+- **Transformer Backbone**: Pretrained `distilbert-base-uncased` feature extractor generating 768-dimensional contextual `[CLS]` embeddings.
+- **Multitask Heads**:
+  - Review Sentiment Head (`models/bert_sentiment_head_v13.joblib`), achieving **85.20% Accuracy** on holdout reviews (+0.40% lift over classical TF-IDF).
+  - Support Ticket Routing Head (`models/bert_ticket_head_v13.joblib`), achieving **100% Accuracy** across 4 critical retail customer service departments (`Delivery & Tracking`, `Refund & Billing`, `Product Quality & Defect`, `Account & Security`).
+- **Diagnostics**: `docs/day13_bert_text_intelligence.png` (confusion matrices for sentiment scoring & ticket routing).
+- **Inference Service**: `src/text_service.py` (`analyze_review_sentiment`, `route_support_ticket`).
+
 ---
 
 ## 🏗 Repository Structure

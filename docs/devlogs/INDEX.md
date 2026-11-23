@@ -16,3 +16,4 @@ This index stores references and links to all per-day developer logs across the 
 - [Day 10](DAY_10_DEVLOG.md) $\rightarrow$ Multi-Horizon Seq2Seq with Bahdanau Attention, attention heatmaps, single-step vs multi-step accuracy comparison, and multi-week procurement forecasting service
 - [Day 11](DAY_11_DEVLOG.md) $\rightarrow$ Generative Deep Learning (VAEs & GANs) for Image Augmentation, mode-collapse quality filtering, synthetic image balancing, and fairness/per-class accuracy lift
 - [Day 12](DAY_12_DEVLOG.md) $\rightarrow$ Classical NLP & Text Processing, Amazon review sentiment baseline, TF-IDF vectorisation, and product insight diagnostics
+- [Day 13](DAY_13_DEVLOG.md) $\rightarrow$ Transformers & BERT text intelligence, DistilBERT contextual embeddings, support ticket routing, and model inference service
