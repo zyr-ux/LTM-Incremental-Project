@@ -1,3 +1,4 @@
+from typing import Optional
 from pathlib import Path
 import numpy as np
 import cv2
@@ -32,7 +33,7 @@ def _get_gradcam_submodels():
     return _gradcam_submodels
 
 # Compute Grad-CAM heatmap highlighting visual regions driving prediction
-def generate_gradcam(image_input, class_idx: int = None) -> np.ndarray:
+def generate_gradcam(image_input, class_idx: Optional[int] = None) -> np.ndarray:
     conv_model, head_model = _get_gradcam_submodels()
 
     if isinstance(image_input, (str, Path)):
@@ -70,8 +71,10 @@ def generate_gradcam(image_input, class_idx: int = None) -> np.ndarray:
 # Blend Grad-CAM heatmap over image as RGB overlay
 def overlay_gradcam(image_input, heatmap: np.ndarray, alpha: float = 0.4) -> np.ndarray:
     if isinstance(image_input, (str, Path)):
-        img = cv2.imread(str(image_input))
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        loaded = cv2.imread(str(image_input))
+        if loaded is None:
+            raise FileNotFoundError(f"Failed to load image from {image_input}")
+        img = cv2.cvtColor(loaded, cv2.COLOR_BGR2RGB)
     elif isinstance(image_input, Image.Image):
         img = np.array(image_input.convert("RGB"))
     elif isinstance(image_input, np.ndarray):
@@ -83,7 +86,7 @@ def overlay_gradcam(image_input, heatmap: np.ndarray, alpha: float = 0.4) -> np.
         heatmap = cv2.resize(heatmap, (img.shape[1], img.shape[0]))
 
     heatmap_uint8 = np.uint8(255 * heatmap)
-    colored_heatmap = cv2.applyColorMap(heatmap_uint8, cv2.COLORMAP_JET)
+    colored_heatmap = cv2.applyColorMap(heatmap_uint8, cv2.COLORMAP_JET)  # type: ignore
     colored_heatmap = cv2.cvtColor(colored_heatmap, cv2.COLOR_BGR2RGB)
 
     blended = cv2.addWeighted(img, 1.0 - alpha, colored_heatmap, alpha, 0)

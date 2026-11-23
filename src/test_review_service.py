@@ -1,4 +1,4 @@
-from review_service import ReviewSentimentService
+from src.review_service import ReviewSentimentService
 
 def test_sentiment_service():
     service = ReviewSentimentService()

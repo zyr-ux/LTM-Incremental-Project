@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Any, List, Sequence, Tuple
+from typing import Any, Dict, List, Sequence, Tuple
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -57,7 +57,7 @@ def evaluate_predictions(
     y_true: np.ndarray,
     y_pred: np.ndarray,
     target_names: List[str]
-) -> dict:
+) -> Dict[str, Any]:
     acc = accuracy_score(y_true, y_pred)
     f1_macro = f1_score(y_true, y_pred, average="macro")
     f1_weighted = f1_score(y_true, y_pred, average="weighted")

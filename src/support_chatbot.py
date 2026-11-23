@@ -40,7 +40,7 @@ class SupportChatbot:
 
     def _build_context_prompt(self, user_message: str, product_metadata: Optional[Dict] = None) -> Tuple[str, str]:
         product_context = "No specific product selected."
-        if product_metadata:
+        if bool(product_metadata):
             product_context = (
                 f"Product Name: {product_metadata.get('productDisplayName', 'Unknown')}\n"
                 f"Category: {product_metadata.get('masterCategory', '')} - {product_metadata.get('subCategory', '')}\n"

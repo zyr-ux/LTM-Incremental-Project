@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 import json
+from typing import Any, Dict
 import numpy as np
 from PIL import Image
 import keras
@@ -23,7 +24,7 @@ def get_model_and_classes():
             _classes = {int(k): v for k, v in json.load(f).items()}
     return _model, _classes
 
-def classify_product_image(image_input) -> dict:
+def classify_product_image(image_input) -> Dict[str, Any]:
     model, classes = get_model_and_classes()
 
     if isinstance(image_input, (str, Path)):

@@ -8,8 +8,10 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 # Segment foreground object using thresholding and morphological cleanup
 def segment_product(image_input, threshold_val: int = 240) -> np.ndarray:
     if isinstance(image_input, (str, Path)):
-        img = cv2.imread(str(image_input))
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        loaded = cv2.imread(str(image_input))
+        if loaded is None:
+            raise FileNotFoundError(f"Failed to load image from {image_input}")
+        img = cv2.cvtColor(loaded, cv2.COLOR_BGR2RGB)
     elif isinstance(image_input, Image.Image):
         img = np.array(image_input.convert("RGB"))
     elif isinstance(image_input, np.ndarray):
@@ -28,8 +30,10 @@ def segment_product(image_input, threshold_val: int = 240) -> np.ndarray:
 # Replace background with uniform color using product segmentation mask
 def composite_on_background(image_input, mask: np.ndarray, bg_color=(255, 255, 255)) -> np.ndarray:
     if isinstance(image_input, (str, Path)):
-        img = cv2.imread(str(image_input))
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        loaded = cv2.imread(str(image_input))
+        if loaded is None:
+            raise FileNotFoundError(f"Failed to load image from {image_input}")
+        img = cv2.cvtColor(loaded, cv2.COLOR_BGR2RGB)
     elif isinstance(image_input, Image.Image):
         img = np.array(image_input.convert("RGB"))
     elif isinstance(image_input, np.ndarray):

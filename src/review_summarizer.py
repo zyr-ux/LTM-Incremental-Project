@@ -22,6 +22,8 @@ class ReviewSummarizer:
         if not reviews:
             return "No reviews available to summarize."
         self._load_model()
+        if self.tokenizer is None or self.model is None:
+            return "Summarization model unavailable."
         combined_text = " ".join([r.strip() for r in reviews if r.strip()])
         truncated_text = combined_text[:1000]
         input_text = f"summarize: {truncated_text}"
@@ -33,7 +35,8 @@ class ReviewSummarizer:
             num_beams=2,
             early_stopping=True
         )
-        return self.tokenizer.decode(summary_ids[0], skip_special_tokens=True).strip()
+        decoded = self.tokenizer.decode(summary_ids[0], skip_special_tokens=True)
+        return str(decoded).strip()
 
     def extract_review_themes(self, reviews: List[str]) -> Dict[str, List[str]]:
         pos_keywords = ["love", "great", "excellent", "comfortable", "perfect", "good", "nice", "durable"]

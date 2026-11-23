@@ -18,3 +18,4 @@ This index stores references and links to all per-day developer logs across the 
 - [Day 12](DAY_12_DEVLOG.md) $\rightarrow$ Classical NLP & Text Processing, Amazon review sentiment baseline, TF-IDF vectorisation, and product insight diagnostics
 - [Day 13](DAY_13_DEVLOG.md) $\rightarrow$ Transformers & BERT text intelligence, DistilBERT contextual embeddings, support ticket routing, and model inference service
 - [Day 14](DAY_14_DEVLOG.md) $\rightarrow$ LLM Apps: Review theme summarization pipeline, thin LLM API client, and policy-grounded conversational support chatbot
+- [Day 15](DAY_15_DEVLOG.md) $\rightarrow$ Latent Diffusion: Pretrained Stable Diffusion pipeline, brand prompt templating, negative prompting, reproducible seed library, and marketing visual asset module

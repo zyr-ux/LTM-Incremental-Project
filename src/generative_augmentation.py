@@ -1,5 +1,6 @@
 import sys
 from pathlib import Path
+from typing_extensions import override
 import os
 import io
 import json
@@ -38,6 +39,7 @@ TARGET_CLASS = "Personal Care"
 TARGET_CLASS_IDX = LABEL_TO_IDX[TARGET_CLASS]
 
 class Sampling(layers.Layer):
+    @override
     def call(self, inputs):
         z_mean, z_log_var = inputs
         batch_size = tf.shape(z_mean)[0]

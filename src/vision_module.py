@@ -1,5 +1,6 @@
 from pathlib import Path
 import json
+from typing import Any, Dict
 import numpy as np
 from PIL import Image
 import keras
@@ -24,7 +25,7 @@ def get_classifier():
             _classes = {int(k): v for k, v in json.load(f).items()}
     return _classifier, _classes
 
-def classify_product(image_input) -> dict:
+def classify_product(image_input) -> Dict[str, Any]:
     classifier, classes = get_classifier()
 
     if isinstance(image_input, (str, Path)):
@@ -50,7 +51,7 @@ def classify_product(image_input) -> dict:
     }
 
 # Unified CV pipeline combining classification, detection, segmentation, and explainability
-def process_catalog_item(image_input, bg_color=(255, 255, 255)) -> dict:
+def process_catalog_item(image_input, bg_color=(255, 255, 255)) -> Dict[str, Any]:
     classification = classify_product(image_input)
     detections = detect_catalog_objects(image_input)
     mask = segment_product(image_input)
@@ -71,7 +72,7 @@ def process_catalog_item(image_input, bg_color=(255, 255, 255)) -> dict:
     }
 
 # Backward-compatible lightweight inspection
-def analyze_catalog_image(image_input) -> dict:
+def analyze_catalog_image(image_input) -> Dict[str, Any]:
     result = process_catalog_item(image_input)
     return {
         "classification": result["classification"],

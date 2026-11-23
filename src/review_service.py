@@ -1,6 +1,7 @@
 import re
 import json
 from pathlib import Path
+from typing import Any, Dict
 import joblib
 import nltk
 from nltk.corpus import stopwords
@@ -32,10 +33,12 @@ class ReviewSentimentService:
         text = re.sub(r"<[^>]+>", " ", text)
         text = re.sub(r"[^a-z\s]", " ", text)
         tokens = word_tokenize(text)
-        clean_tokens = [w for w in tokens if w not in STOP_WORDS and len(w) > 2]
-        return " ".join(clean_tokens)
+        clean_tokens = [str(w) for w in tokens if w not in STOP_WORDS and len(w) > 2]
+        result_str = " ".join(clean_tokens)
+        assert isinstance(result_str, str)
+        return result_str
 
-    def analyze_review(self, review_text: str) -> dict:
+    def analyze_review(self, review_text: str) -> Dict[str, Any]:
         cleaned = self.clean_text(review_text)
         features = self.vectorizer.transform([cleaned])
         pred_label = int(self.model.predict(features)[0])

@@ -30,7 +30,7 @@ class LLMClient:
             "Content-Type": "application/json"
         }
         messages = []
-        if system_prompt:
+        if bool(system_prompt):
             messages.append({"role": "system", "content": system_prompt})
         messages.append({"role": "user", "content": prompt})
         
@@ -44,7 +44,9 @@ class LLMClient:
             resp = client.post(url, headers=headers, json=payload)
             resp.raise_for_status()
             data = resp.json()
-            return data["choices"][0]["message"]["content"].strip()
+            raw_content = data["choices"][0]["message"]["content"]
+            content: str = str(raw_content)
+            return content.strip()
 
     def _call_anthropic(self, prompt: str, system_prompt: Optional[str], max_tokens: int) -> str:
         url = "https://api.anthropic.com/v1/messages"
@@ -59,13 +61,15 @@ class LLMClient:
             "messages": [{"role": "user", "content": prompt}],
             "temperature": 0.2
         }
-        if system_prompt:
+        if bool(system_prompt):
             payload["system"] = system_prompt
         with httpx.Client(timeout=15.0) as client:
             resp = client.post(url, headers=headers, json=payload)
             resp.raise_for_status()
             data = resp.json()
-            return data["content"][0]["text"].strip()
+            raw_content = data["content"][0]["text"]
+            content: str = str(raw_content)
+            return content.strip()
 
     def _fallback_rule_generation(self, prompt: str, system_prompt: Optional[str]) -> str:
         lowered = prompt.lower()

@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Any, Dict, List
 from ultralytics import YOLO
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
@@ -12,14 +13,15 @@ def get_detector() -> YOLO:
         _detector = YOLO(str(YOLO_MODEL_PATH))
     return _detector
 
-def detect_catalog_objects(image_input, conf: float = 0.25) -> list:
+def detect_catalog_objects(image_input, conf: float = 0.25) -> List[Dict[str, Any]]:
     model = get_detector()
     results = model.predict(image_input, conf=conf, verbose=False)
     detections = []
 
     for r in results:
-        if hasattr(r, "boxes") and r.boxes is not None:
-            for box in r.boxes:
+        boxes = getattr(r, "boxes", None)
+        if boxes is not None:
+            for box in boxes:
                 cls_id = int(box.cls[0])
                 detections.append({
                     "label": model.names[cls_id],

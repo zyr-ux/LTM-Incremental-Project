@@ -16,7 +16,8 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import PCA
 from sklearn.ensemble import RandomForestClassifier
-from xgboost import XGBClassifier
+import xgboost as xgb
+XGBClassifier = getattr(xgb, "XGBClassifier")
 from sklearn.metrics import (
     accuracy_score,
     precision_score,

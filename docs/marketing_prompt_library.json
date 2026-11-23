@@ -1,0 +1,38 @@
+[
+  {
+    "campaign_id": "summer_apparel_01",
+    "product_name": "Turtle Check Navy Blue Linen Shirt",
+    "category": "Apparel - Topwear",
+    "style_preset": "lifestyle_editorial",
+    "setting_context": "sunlit minimalist seaside resort terrace",
+    "seed": 101,
+    "guidance_scale": 7.5
+  },
+  {
+    "campaign_id": "luxury_accessories_02",
+    "product_name": "Titan Chronograph Silver Edition Watch",
+    "category": "Accessories - Watches",
+    "style_preset": "studio_minimalist",
+    "setting_context": "polished dark slate pedestal with subtle rim lighting",
+    "seed": 202,
+    "guidance_scale": 8.0
+  },
+  {
+    "campaign_id": "street_denim_03",
+    "product_name": "Peter England Slim Fit Indigo Denim Jeans",
+    "category": "Apparel - Bottomwear",
+    "style_preset": "urban_streetwear",
+    "setting_context": "downtown urban loft with concrete textures and soft natural sidelight",
+    "seed": 303,
+    "guidance_scale": 7.5
+  },
+  {
+    "campaign_id": "activewear_launch_04",
+    "product_name": "Manchester United Performance Training Track Pants",
+    "category": "Apparel - Sportswear",
+    "style_preset": "flatlay_ecommerce",
+    "setting_context": "contemporary matte gym studio flat surface",
+    "seed": 404,
+    "guidance_scale": 7.0
+  }
+]

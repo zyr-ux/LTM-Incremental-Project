@@ -63,6 +63,14 @@ RetailMind AI is an end-to-end retail AI platform built incrementally across 35 
 - **Support Chatbot**: `src/support_chatbot.py` conversational assistant maintaining conversation history, grounded with prompt templates on retail store policies (30-day returns, refunds, shipping SLAs) and product metadata.
 - **Integrated Assistant Module**: `src/assistant_service.py` (`summarize_product_reviews`, `chat_with_assistant`).
 
+### 8. Diffusion — Marketing & Product Imagery Module (Day 15)
+- **Model Backbone**: Latent Diffusion Models (Hugging Face `diffusers` with `runwayml/stable-diffusion-v1-5` & DPMSolverMultistepScheduler)
+- **Core Libraries**: `diffusers`, `torch`, `Pillow`, `numpy`, `json`
+- **Hardware-Resilient Generation**: Seamless execution on standard laptops (CPU preview rendering with deterministic texture & watermark branding) with automatic CUDA GPU acceleration when dedicated hardware is available.
+- **Brand Style Presets & Negative Prompting**: Curated prompts (`studio_minimalist`, `lifestyle_editorial`, `urban_streetwear`, `flatlay_ecommerce`) combined with quality suppression filters (negative prompts eliminating blur, distortion, and deformities).
+- **Seed Control & Prompt Library**: Reproducible campaign recipes stored in `docs/marketing_prompt_library.json` and generated campaign assets in `docs/marketing_assets/`.
+- **Creative Service**: `src/marketing_service.py` (`create_product_marketing_asset`, `generate_campaign_assets`, `generate_marketing_image`).
+
 ---
 
 ## 🏗 Repository Structure
@@ -95,6 +103,7 @@ LTM Incremental Project/
 │       ├── DAY_12_DEVLOG.md
 │       ├── DAY_13_DEVLOG.md
 │       ├── DAY_14_DEVLOG.md
+│       ├── DAY_15_DEVLOG.md
 │       └── INDEX.md
 ├── models/
 │   ├── ann_preprocessor_v5.joblib
@@ -153,7 +162,9 @@ LTM Incremental Project/
 │   ├── llm_client.py
 │   ├── review_summarizer.py
 │   ├── support_chatbot.py
-│   └── assistant_service.py
+│   ├── assistant_service.py
+│   ├── marketing_diffusion.py
+│   └── marketing_service.py
 ├── .gitignore
 ├── requirements.txt
 └── README.md

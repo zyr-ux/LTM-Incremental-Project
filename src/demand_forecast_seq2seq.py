@@ -1,6 +1,7 @@
 import json
 import joblib
 from pathlib import Path
+from typing_extensions import override
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -44,6 +45,7 @@ class BahdanauAttention(layers.Layer):
         self.W2 = layers.Dense(units)
         self.V = layers.Dense(1)
 
+    @override
     def call(self, query, values):
         query_with_time_axis = tf.expand_dims(query, 1)
         score = self.V(tf.nn.tanh(self.W1(query_with_time_axis) + self.W2(values)))
@@ -52,6 +54,7 @@ class BahdanauAttention(layers.Layer):
         context_vector = tf.reduce_sum(context_vector, axis=1)
         return context_vector, attention_weights
 
+    @override
     def get_config(self):
         config = super().get_config()
         config.update({"units": self.units})
@@ -69,6 +72,7 @@ class Seq2SeqAttentionModel(keras.Model):
         self.attention = BahdanauAttention(dec_units)
         self.dense_out = layers.Dense(1)
 
+    @override
     def call(self, inputs, training=None):
         enc_seq, state_h, state_c = self.encoder_lstm(inputs)
         dec_state = [state_h, state_c]
@@ -115,6 +119,7 @@ class Seq2SeqAttentionModel(keras.Model):
                 metric.update_state(y, y_pred)
         return {m.name: m.result() for m in self.metrics}
 
+    @override
     def get_config(self):
         config = super().get_config()
         config.update({
