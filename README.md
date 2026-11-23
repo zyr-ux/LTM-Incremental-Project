@@ -55,6 +55,14 @@ RetailMind AI is an end-to-end retail AI platform built incrementally across 35 
 - **Diagnostics**: `docs/day13_bert_text_intelligence.png` (confusion matrices for sentiment scoring & ticket routing).
 - **Inference Service**: `src/text_service.py` (`analyze_review_sentiment`, `route_support_ticket`).
 
+### 7. LLM Apps — Summaries & Conversational Support Chatbot (Day 14)
+- **Datasets**: Amazon Customer Reviews (`amazon_polarity` sample) + Fashion Product Catalog Metadata & Store Policies
+- **Core Libraries**: `transformers`, `torch`, `httpx`, `pandas`
+- **Review Theme Summarization**: Hugging Face Seq2Seq (`t5-small`) condensing batches of customer product reviews into concise theme summaries and aspect keywords (strengths vs concerns).
+- **Thin LLM API Client**: `src/llm_client.py` connecting seamlessly to OpenAI or Anthropic APIs with keys loaded from environment variables (`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`) and built-in offline retail policy fallbacks.
+- **Support Chatbot**: `src/support_chatbot.py` conversational assistant maintaining conversation history, grounded with prompt templates on retail store policies (30-day returns, refunds, shipping SLAs) and product metadata.
+- **Integrated Assistant Module**: `src/assistant_service.py` (`summarize_product_reviews`, `chat_with_assistant`).
+
 ---
 
 ## 🏗 Repository Structure
@@ -84,9 +92,14 @@ LTM Incremental Project/
 │       ├── DAY_09_DEVLOG.md
 │       ├── DAY_10_DEVLOG.md
 │       ├── DAY_11_DEVLOG.md
+│       ├── DAY_12_DEVLOG.md
+│       ├── DAY_13_DEVLOG.md
+│       ├── DAY_14_DEVLOG.md
 │       └── INDEX.md
 ├── models/
 │   ├── ann_preprocessor_v5.joblib
+│   ├── bert_sentiment_head_v13.joblib
+│   ├── bert_ticket_head_v13.joblib
 │   ├── churn_ann_v5.keras
 │   ├── churn_pipeline_baseline.joblib
 │   ├── churn_pipeline_champion.joblib
@@ -103,6 +116,10 @@ LTM Incremental Project/
 │   ├── product_catalog_cnn_augmented_v11.keras
 │   ├── product_catalog_cnn_v6.keras
 │   ├── product_catalog_transfer_v7.keras
+│   ├── sentiment_classifier_v12.joblib
+│   ├── sentiment_metadata_v12.json
+│   ├── text_intelligence_metadata_v13.json
+│   ├── tfidf_vectorizer_v12.joblib
 │   ├── vae_decoder_personal_care.keras
 │   ├── vae_encoder_personal_care.keras
 │   └── yolov8n.pt
@@ -127,7 +144,16 @@ LTM Incremental Project/
 │   ├── vision_module.py
 │   ├── demand_forecast_lstm.py
 │   ├── demand_forecast_seq2seq.py
-│   └── demand_service.py
+│   ├── demand_service.py
+│   ├── generative_augmentation.py
+│   ├── review_sentiment_pipeline.py
+│   ├── review_service.py
+│   ├── bert_text_intelligence.py
+│   ├── text_service.py
+│   ├── llm_client.py
+│   ├── review_summarizer.py
+│   ├── support_chatbot.py
+│   └── assistant_service.py
 ├── .gitignore
 ├── requirements.txt
 └── README.md
