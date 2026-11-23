@@ -37,6 +37,14 @@ RetailMind AI is an end-to-end retail AI platform built incrementally across 35 
 - **Fairness Benchmark Report**: `docs/day11_synthetic_augmentation_results.png` and `docs/day11_augmentation_metrics.json`.
 - **Pipeline Script**: `src/generative_augmentation.py`.
 
+### 5. Review Intelligence & Sentiment Analysis Module (Day 12)
+- **Dataset**: Amazon Customer Reviews (`amazon_polarity` sample in `data/processed/reviews_sentiment_sample.parquet`)
+- **Core Libraries**: `scikit-learn`, `nltk`, `pandas`, `joblib`, `matplotlib`
+- **Classical NLP Pipeline**: `src/review_sentiment_pipeline.py` (text cleaning, NLTK stopword removal, regex noise stripping, and unigram/bigram TF-IDF vectorisation).
+- **Baseline Models**: Logistic Regression champion (**85.90% Accuracy**) and Linear SVM (**85.70% Accuracy**).
+- **Insight Diagnostics**: `docs/day12_classical_sentiment_insights.png` (lexical drivers for positive vs negative customer sentiment).
+- **Inference Service**: `src/review_service.py` (`ReviewSentimentService`).
+
 ---
 
 ## 🏗 Repository Structure

@@ -18,6 +18,8 @@ keras
 tensorflow
 pillow
 xgboost
+nltk
+datasets
 
 # Graphs
 matplotlib

@@ -1,0 +1,138 @@
+{
+  "model_type": "LogisticRegression + TFIDF",
+  "vocabulary_size": 5000,
+  "ngram_range": [
+    1,
+    2
+  ],
+  "accuracy": 0.859,
+  "linear_svm_accuracy": 0.857,
+  "top_positive_terms": [
+    [
+      "great",
+      5.8223
+    ],
+    [
+      "excellent",
+      3.8657
+    ],
+    [
+      "best",
+      3.4756
+    ],
+    [
+      "love",
+      3.2763
+    ],
+    [
+      "good",
+      2.8503
+    ],
+    [
+      "wonderful",
+      2.5081
+    ],
+    [
+      "easy",
+      2.4082
+    ],
+    [
+      "perfect",
+      2.2375
+    ],
+    [
+      "well",
+      2.1592
+    ],
+    [
+      "awesome",
+      2.1338
+    ],
+    [
+      "amazing",
+      1.991
+    ],
+    [
+      "must",
+      1.9834
+    ],
+    [
+      "favorite",
+      1.9075
+    ],
+    [
+      "highly",
+      1.7697
+    ],
+    [
+      "life",
+      1.7136
+    ]
+  ],
+  "top_negative_terms": [
+    [
+      "boring",
+      -3.5101
+    ],
+    [
+      "disappointed",
+      -3.1937
+    ],
+    [
+      "worst",
+      -2.972
+    ],
+    [
+      "waste",
+      -2.9595
+    ],
+    [
+      "bad",
+      -2.9423
+    ],
+    [
+      "poor",
+      -2.4869
+    ],
+    [
+      "money",
+      -2.1262
+    ],
+    [
+      "disappointing",
+      -2.1025
+    ],
+    [
+      "terrible",
+      -2.0922
+    ],
+    [
+      "horrible",
+      -1.9888
+    ],
+    [
+      "return",
+      -1.7936
+    ],
+    [
+      "nothing",
+      -1.7477
+    ],
+    [
+      "would",
+      -1.744
+    ],
+    [
+      "waste money",
+      -1.6693
+    ],
+    [
+      "awful",
+      -1.6266
+    ]
+  ],
+  "label_mapping": {
+    "0": "Negative",
+    "1": "Positive"
+  }
+}
