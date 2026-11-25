@@ -190,8 +190,18 @@ LTM Incremental Project/
 │   ├── product_variations.py
 │   ├── promo_video_generator.py
 │   ├── tts_voice.py
-│   ├── multimodal_search.py
-│   └── test_multimodal_and_tts.py
+│   └── multimodal_search.py
+├── tests/
+│   ├── test_assistant_service.py
+│   ├── test_catalog_segmenter.py
+│   ├── test_churn_service.py
+│   ├── test_demand_service.py
+│   ├── test_marketing_service.py
+│   ├── test_multimodal_and_tts.py
+│   ├── test_product_variations.py
+│   ├── test_review_service.py
+│   └── test_text_service.py
+├── pytest.ini
 ├── .gitignore
 ├── requirements.txt
 └── README.md

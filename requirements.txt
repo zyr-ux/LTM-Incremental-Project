@@ -39,5 +39,6 @@ ipython
 jupyter_client
 jupyter_core
 
-# Development / Type Checking
+# Development / Testing / Type Checking
+pytest
 ty

@@ -54,7 +54,7 @@ Accessible and engaging retail experiences combine natural voice responses with 
 
 ## 3. Verification & Testing
 
-Unit tests in `src/test_multimodal_and_tts.py` verify:
+Unit tests in `tests/test_multimodal_and_tts.py` verify:
 1. `test_voice_synthesizer_generates_wav`: Generates valid `.wav` audio files from support text.
 2. `test_assistant_chat_with_voice`: Confirms `RetailAssistantModule.chat(..., with_voice=True)` returns both text and audio metadata.
 3. `test_multimodal_search_text_and_image`: Verifies CLIP index creation, `.npz`/`.json` persistence, reload, search-by-text, and search-by-image.
