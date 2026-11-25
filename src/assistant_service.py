@@ -1,28 +1,43 @@
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 from src.support_chatbot import SupportChatbot
 from src.review_summarizer import ReviewSummarizer
 from src.llm_client import LLMClient
+from src.tts_voice import VoiceSynthesizer
 
 class RetailAssistantModule:
     def __init__(
         self,
         llm_client: Optional[LLMClient] = None,
-        summarizer: Optional[ReviewSummarizer] = None
+        summarizer: Optional[ReviewSummarizer] = None,
+        tts: Optional[VoiceSynthesizer] = None,
     ):
         self.llm_client = llm_client or LLMClient()
         self.summarizer = summarizer or ReviewSummarizer()
         self.chatbot = SupportChatbot(llm_client=self.llm_client)
+        self.tts = tts or VoiceSynthesizer()
 
     def summarize_reviews(self, product_name: str, reviews: List[str]) -> Dict:
         return self.summarizer.summarize_product_reviews(product_name=product_name, reviews=reviews)
 
-    def chat(self, user_message: str, product_metadata: Optional[Dict] = None) -> Dict:
+    def speak_reply(self, text: str, output_path: Optional[str] = None) -> Dict[str, Any]:
+        return self.tts.speak(text=text, output_path=output_path)
+
+    def chat(
+        self,
+        user_message: str,
+        product_metadata: Optional[Dict] = None,
+        with_voice: bool = False,
+        audio_output_path: Optional[str] = None,
+    ) -> Dict[str, Any]:
         response = self.chatbot.reply(user_message=user_message, product_metadata=product_metadata)
-        return {
+        result: Dict[str, Any] = {
             "user_message": user_message,
             "response": response,
-            "conversation_turns": len(self.chatbot.history) // 2
+            "conversation_turns": len(self.chatbot.history) // 2,
         }
+        if with_voice:
+            result["audio"] = self.speak_reply(response, output_path=audio_output_path)
+        return result
 
     def reset_chat(self):
         self.chatbot.clear_history()
@@ -39,6 +54,20 @@ def summarize_product_reviews(product_name: str, reviews: List[str]) -> Dict:
     assistant = get_assistant()
     return assistant.summarize_reviews(product_name, reviews)
 
-def chat_with_assistant(user_message: str, product_metadata: Optional[Dict] = None) -> Dict:
+def chat_with_assistant(
+    user_message: str,
+    product_metadata: Optional[Dict] = None,
+    with_voice: bool = False,
+    audio_output_path: Optional[str] = None,
+) -> Dict[str, Any]:
     assistant = get_assistant()
-    return assistant.chat(user_message, product_metadata)
+    return assistant.chat(
+        user_message,
+        product_metadata,
+        with_voice=with_voice,
+        audio_output_path=audio_output_path,
+    )
+
+def speak_assistant_reply(text: str, output_path: Optional[str] = None) -> Dict[str, Any]:
+    assistant = get_assistant()
+    return assistant.speak_reply(text=text, output_path=output_path)

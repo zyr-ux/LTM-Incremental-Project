@@ -1,10 +1,10 @@
 import sys
 from pathlib import Path
 import json
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional
 import numpy as np
 from PIL import Image
-import keras
+from src.multimodal_search import MultimodalCatalogSearch
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 DEFAULT_MODEL_PATH = ROOT_DIR / "models" / "product_catalog_cnn_augmented_v11.keras"
@@ -18,6 +18,7 @@ _classes = None
 def get_model_and_classes():
     global _model, _classes
     if _model is None:
+        import keras
         _model = keras.models.load_model(MODEL_PATH)
     if _classes is None:
         with open(METADATA_PATH, "r") as f:
@@ -52,4 +53,26 @@ def classify_product_image(image_input) -> Dict[str, Any]:
         "confidence": round(confidence, 4),
         "all_probabilities": class_probs,
     }
+
+
+_multimodal_search: Optional[MultimodalCatalogSearch] = None
+
+
+def get_multimodal_search() -> MultimodalCatalogSearch:
+    global _multimodal_search
+    if _multimodal_search is None:
+        _multimodal_search = MultimodalCatalogSearch()
+        if not _multimodal_search.load_index():
+            _multimodal_search.build_index_from_parquet(limit=100, save=True)
+    return _multimodal_search
+
+
+def search_catalog_by_text(query: str, top_k: int = 5) -> List[Dict[str, Any]]:
+    searcher = get_multimodal_search()
+    return searcher.search_by_text(query=query, top_k=top_k)
+
+
+def search_catalog_by_image(image_input: Any, top_k: int = 5) -> List[Dict[str, Any]]:
+    searcher = get_multimodal_search()
+    return searcher.search_by_image(image_input=image_input, top_k=top_k)
 

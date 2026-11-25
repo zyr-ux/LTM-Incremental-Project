@@ -78,6 +78,13 @@ RetailMind AI is an end-to-end retail AI platform built incrementally across 35 
 - **Promo Video Clip Assembly**: `src/promo_video_generator.py` (`generate_product_promo_clip`, `build_promo_video`) interpolating smooth alpha-blended transition frames between catalog products and generated variations, encoded to MP4 via OpenCV.
 - **Integrated Creative Service**: `src/marketing_service.py` (`create_product_variations`, `create_promo_clip`).
 
+### 10. TTS Voice & Multimodal Search Module (Day 17)
+- **Dataset**: [Fashion Product Images](data/raw/fashion_products/fashion_products_sample.parquet) (`fashion-product-images-small`) + Catalog Metadata
+- **Core Libraries**: `transformers` (TTS & CLIP), `torch`, `Pillow`, `numpy`, `pandas`, `wave`
+- **TTS Voice Support**: `src/tts_voice.py` (`VoiceSynthesizer`) using Hugging Face `facebook/mms-tts-eng` text-to-speech pipeline (with offline fallback) to export `.wav` voice replies to `data/processed/voice_replies/`.
+- **CLIP Multimodal Search**: `src/multimodal_search.py` (`MultimodalCatalogSearch`) embedding catalog images and text into a shared 512-d `openai/clip-vit-base-patch32` space (`data/processed/clip_catalog_embeddings.npz` + `clip_catalog_metadata.json`) for search-by-text and search-by-image.
+- **UX Integration**: Wired into `src/assistant_service.py` (`speak_reply`, `chat(..., with_voice=True)`, `speak_assistant_reply`) and `src/catalog_service.py` (`search_catalog_by_text`, `search_catalog_by_image`).
+
 ---
 
 ## 🏗 Repository Structure
@@ -117,6 +124,7 @@ LTM Incremental Project/
 │       ├── DAY_14_DEVLOG.md
 │       ├── DAY_15_DEVLOG.md
 │       ├── DAY_16_DEVLOG.md
+│       ├── DAY_17_DEVLOG.md
 │       └── INDEX.md
 ├── models/
 │   ├── ann_preprocessor_v5.joblib
@@ -180,7 +188,10 @@ LTM Incremental Project/
 │   ├── marketing_diffusion.py
 │   ├── marketing_service.py
 │   ├── product_variations.py
-│   └── promo_video_generator.py
+│   ├── promo_video_generator.py
+│   ├── tts_voice.py
+│   ├── multimodal_search.py
+│   └── test_multimodal_and_tts.py
 ├── .gitignore
 ├── requirements.txt
 └── README.md
