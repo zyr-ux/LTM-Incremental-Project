@@ -21,3 +21,4 @@ This index stores references and links to all per-day developer logs across the 
 - [Day 15](DAY_15_DEVLOG.md) $\rightarrow$ Latent Diffusion: Pretrained Stable Diffusion pipeline, brand prompt templating, negative prompting, reproducible seed library, and marketing visual asset module
 - [Day 16](DAY_16_DEVLOG.md) $\rightarrow$ Diffusion Variations & Promo Video: Image-to-image (img2img) catalog variation sweeps, transition frame interpolation, and marketing promo clip generation
 - [Day 17](DAY_17_DEVLOG.md) $\rightarrow$ TTS Voice & Multimodal Search: Hugging Face TTS voice support replies, CLIP image+text catalog embeddings, search-by-text/image, and assistant/catalog integration
+- [Day 18](DAY_18_DEVLOG.md) $\rightarrow$ RAG foundations: product and policy chunking, sentence-transformer embeddings, and persistent FAISS semantic search

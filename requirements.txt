@@ -20,6 +20,8 @@ pillow
 xgboost
 nltk
 datasets
+sentence-transformers
+faiss-cpu
 
 # Graphs
 matplotlib

@@ -85,6 +85,13 @@ RetailMind AI is an end-to-end retail AI platform built incrementally across 35 
 - **CLIP Multimodal Search**: `src/multimodal_search.py` (`MultimodalCatalogSearch`) embedding catalog images and text into a shared 512-d `openai/clip-vit-base-patch32` space (`data/processed/clip_catalog_embeddings.npz` + `clip_catalog_metadata.json`) for search-by-text and search-by-image.
 - **UX Integration**: Wired into `src/assistant_service.py` (`speak_reply`, `chat(..., with_voice=True)`, `speak_assistant_reply`) and `src/catalog_service.py` (`search_catalog_by_text`, `search_catalog_by_image`).
 
+### 11. RAG Foundations — Vector Knowledge Base (Day 18)
+- **Corpus**: Kaggle `styles.csv` product metadata plus store policies in `data/raw/policies/`.
+- **Embeddings & Storage**: `src/knowledge_base.py` chunks text, embeds it with `sentence-transformers/all-MiniLM-L6-v2`, and stores normalized vectors in a FAISS index.
+- **Persistence**: The index and JSON chunk metadata are saved under `data/processed/retail_knowledge_base/` and ignored by Git.
+- **Search**: Build with `python -m src.knowledge_base --build`, then query with `python -m src.knowledge_base --query "How long does express shipping take?"`.
+- **Dataset Setup**: Put the Kaggle `styles.csv` file at `data/raw/fashion_products/styles.csv` (or pass another path with `--catalog`). Policy source files live in `data/raw/policies/`. Use `--build --policies-only` to index policies before downloading the catalog.
+
 ---
 
 ## 🏗 Repository Structure
@@ -104,6 +111,7 @@ LTM Incremental Project/
 │   │       └── summer_apparel_01.png
 │   └── raw/
 ├── docs/
+│   ├── policies/
 │   ├── demand_attention_weights.png
 │   ├── demand_forecast_evaluation.png
 │   ├── demand_seq2seq_evaluation.png
