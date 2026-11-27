@@ -1,5 +1,5 @@
 from typing import Any, Dict, List, Optional
-from src.support_chatbot import SupportChatbot
+from src.rag_assistant import RAGAssistant
 from src.review_summarizer import ReviewSummarizer
 from src.llm_client import LLMClient
 from src.tts_voice import VoiceSynthesizer
@@ -10,10 +10,11 @@ class RetailAssistantModule:
         llm_client: Optional[LLMClient] = None,
         summarizer: Optional[ReviewSummarizer] = None,
         tts: Optional[VoiceSynthesizer] = None,
+        chatbot: Optional[RAGAssistant] = None,
     ):
         self.llm_client = llm_client or LLMClient()
         self.summarizer = summarizer or ReviewSummarizer()
-        self.chatbot = SupportChatbot(llm_client=self.llm_client)
+        self.chatbot = chatbot or RAGAssistant(llm_client=self.llm_client)
         self.tts = tts or VoiceSynthesizer()
 
     def summarize_reviews(self, product_name: str, reviews: List[str]) -> Dict:
@@ -29,10 +30,14 @@ class RetailAssistantModule:
         with_voice: bool = False,
         audio_output_path: Optional[str] = None,
     ) -> Dict[str, Any]:
-        response = self.chatbot.reply(user_message=user_message, product_metadata=product_metadata)
+        rag_result = self.chatbot.ask(user_message=user_message, product_metadata=product_metadata)
+        response = rag_result["answer"]
         result: Dict[str, Any] = {
             "user_message": user_message,
             "response": response,
+            "sources": rag_result["sources"],
+            "passages": rag_result["passages"],
+            "grounded": rag_result["grounded"],
             "conversation_turns": len(self.chatbot.history) // 2,
         }
         if with_voice:

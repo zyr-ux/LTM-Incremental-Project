@@ -22,6 +22,8 @@ nltk
 datasets
 sentence-transformers
 faiss-cpu
+langchain
+langchain-core
 
 # Graphs
 matplotlib

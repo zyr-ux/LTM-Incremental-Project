@@ -92,6 +92,13 @@ RetailMind AI is an end-to-end retail AI platform built incrementally across 35 
 - **Search**: Build with `python -m src.knowledge_base --build`, then query with `python -m src.knowledge_base --query "How long does express shipping take?"`.
 - **Dataset Setup**: Put the Kaggle `styles.csv` file at `data/raw/fashion_products/styles.csv` (or pass another path with `--catalog`). Policy source files live in `data/raw/policies/`. Use `--build --policies-only` to index policies before downloading the catalog.
 
+### 12. RAG Pipeline — Grounded Q&A (Day 19)
+- **Dataset**: Day-18 FAISS vector store (`data/processed/retail_knowledge_base/`).
+- **Core Libraries**: `langchain`, `langchain-core`, `faiss-cpu`, `httpx`
+- **Grounded RAG Chain**: `src/rag_assistant.py` (`RAGAssistant`) wires `RetailKnowledgeBase` retrieval into a LangChain `ChatPromptTemplate | RunnableLambda | StrOutputParser` chain.
+- **Anti-Hallucination & Citations**: The prompt instructs the LLM to answer only from retrieved context, cite `[source]` filenames, and return a safe fallback when no relevant passages are found.
+- **Staff Verification & Integration**: Replaces the Day-14 ungrounded `SupportChatbot` inside `src/assistant_service.py` (`RetailAssistantModule.chat`), returning `sources`, `passages`, and `grounded` alongside `response`.
+
 ---
 
 ## 🏗 Repository Structure
